@@ -1,4 +1,4 @@
-package org.osakabot.OsakaBot.listeners;
+package org.osakabot.OsakaBot.commands;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
@@ -12,13 +12,14 @@ import java.util.List;
 
 public class PingBot extends ListenerAdapter {
 
-    String flag = "test!";
+    private static final String flag = "!";
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         String authorName = event.getAuthor().getName();
         String messageContent = event.getMessage().getContentRaw();
 
-        if (messageContent.contains(flag) && !event.getAuthor().isBot())
+        if (messageContent.contains(flag + "play") && !event.getAuthor().isBot())
             onEchoCommand(event, event.getGuild(), messageContent.replaceFirst(flag, ""));
         else
             System.out.println("Message from " + authorName + ": " + messageContent.replaceFirst(flag, ""));
@@ -37,17 +38,17 @@ public class PingBot extends ListenerAdapter {
         {
             List<VoiceChannel> channels = guild.getVoiceChannelsByName(arg, true);
             if (!channels.isEmpty())
-                channel = channels.get(0);
+                channel = channels.getFirst();
         }
 
         MessageChannel messageChannel = event.getChannel();
-        if (channel == null)                    // I have no idea what you want mr user
+        if (channel == null)
         {
-            onUnknownChannel(messageChannel, arg); // Let the user know about our failure
+            onUnknownChannel(messageChannel, arg);
             return;
         }
-        connectTo(channel);                     // We found a channel to connect to!
-        onConnecting(channel, messageChannel);     // Let the user know, we were successful!
+        connectTo(channel);
+        onConnecting(channel, messageChannel);
     }
 
     private void connectTo(AudioChannel channel)
@@ -56,7 +57,7 @@ public class PingBot extends ListenerAdapter {
         // Get an audio manager for this guild, this will be created upon first use for each guild
         AudioManager audioManager = guild.getAudioManager();
         // Create our Send/Receive handler for the audio connection
-        EchoHandler handler = new EchoHandler();
+        GuildPlayer handler = new GuildPlayer(guild, channel);
 
         // The order of the following instructions does not matter!
 

@@ -1,7 +1,4 @@
-package org.osakabot.OsakaBot.listeners;
-
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
+package org.osakabot.OsakaBot.commands;
 
 import javax.security.auth.login.LoginException;
 
