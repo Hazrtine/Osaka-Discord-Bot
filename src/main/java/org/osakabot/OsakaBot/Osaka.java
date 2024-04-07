@@ -9,7 +9,7 @@ import org.osakabot.OsakaBot.commands.PingBot;
 
 
 public class Osaka {
-    private final String botName = "OsakaBot";
+    private static final String botName = "OsakaBot";
 
     public static void main(String[] arguments) throws Exception
     {

@@ -6,11 +6,14 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.osakabot.OsakaBot.Osaka;
+import org.osakabot.OsakaBot.backend.AbstractCommand;
 import org.osakabot.OsakaBot.backend.Command;
+import org.osakabot.OsakaBot.paincheckers.AccessConfiguration;
 
 import java.util.List;
+import java.util.Optional;
 
-public class HelperBot extends ListenerAdapter {
+public class HelperBot extends ListenerAdapter implements AbstractCommand {
 
     private Guild guild;
 
@@ -38,17 +41,16 @@ public class HelperBot extends ListenerAdapter {
     }
 
     private void showCommandHelp() {
-            String setPrefix = "!";
             String botName =  Osaka.getBotName();
 
-            char argumentPrefix = ArgumentPrefixProperty.getForCurrentContext().getArgumentPrefix();
+            char argumentPrefix = '!';
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle("Command " + command.getIdentifier() + ":");
             String descriptionFormat = command.getDescription();
             String descriptionText = String.format(descriptionFormat, prefix, argumentPrefix);
             embedBuilder.setDescription(descriptionText);
-            Optional<AccessConfiguration> accessConfiguration = Aiode.get().getSecurityManager().getAccessConfiguration(command.getPermissionTarget(), guild);
+            Optional<AccessConfiguration> accessConfiguration = Osaka.getSecurityManager().getAccessConfiguration(command.getPermissionTarget(), guild);
             if (accessConfiguration.isPresent()) {
                 String title = "Available to roles: ";
                 String text;
@@ -91,5 +93,14 @@ public class HelperBot extends ListenerAdapter {
 
             embedBuilder.setColor(ColorSchemeProperty.getColor());
         }
+
+    @Override
+    public void doRun() throws Exception {
+
+    }
+
+    @Override
+    public void onSuccess() {
+
     }
 }
