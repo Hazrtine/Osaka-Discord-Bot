@@ -2,9 +2,7 @@ package org.osakabot.OsakaBot.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -13,6 +11,7 @@ import org.osakabot.OsakaBot.backend.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.util.List;
 
 public class HelperBot extends ListenerAdapter implements Command {
@@ -20,7 +19,7 @@ public class HelperBot extends ListenerAdapter implements Command {
     private Guild guild;
     private TextChannel channel;
     private Message message;
-    private Command command = null;
+    private Command command;
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -28,7 +27,16 @@ public class HelperBot extends ListenerAdapter implements Command {
         channel = event.getChannel().asTextChannel();
         message = event.getMessage();
         while (command != null) { //this is an * immensely *  stupid solution but i have to start testing
-            if (getCommandBody().equals(""))
+            if (getCommandBody().equals("play"))
+                command = new PlayBot();
+            else if (getCommandBody().equals("help"))
+                command = new HelperBot();
+            else if (getCommandBody().equals("info") || getCommandBody().equals("information"))
+                command = new InformationBot();
+            else {
+                onFailure("No Such Command Exists");
+                return;
+            }
         }
         if (event.getMessage().getContentRaw().startsWith("!help")) {
             if (event.getMessage().getContentRaw().replaceAll(" ", "").length() > 5) {
@@ -45,7 +53,7 @@ public class HelperBot extends ListenerAdapter implements Command {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Command " + command.getIdentifier() + ":");
         String descriptionFormat = command.getDescription();
-        String descriptionText = String.format(descriptionFormat, prefix, argumentPrefix);
+        String descriptionText = String.format(descriptionFormat);
         embedBuilder.setDescription(descriptionText);
     }
 
@@ -60,9 +68,11 @@ public class HelperBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public void onFailure() {
-        LOGGER.debug("HelperBot Failed.");
-        channel.sendMessage("That command doesn't exist buddy.").queue();
+    public void onFailure(String errorMessage) {
+        LOGGER.debug(errorMessage);
+        channel.sendMessage("Command Failed. Shape up man.").queue();
+        Member member = Osaka.getCreator();
+        channel.sendMessage("and uh...").mention(member).queue();
     }
 
     @Override
@@ -71,18 +81,13 @@ public class HelperBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public void setFailed(boolean failed) {
-
-    }
-
-    @Override
     public String getCommandBody() {
-        return message.getContentRaw().replaceFirst("!help", "");
+        return message.getContentRaw().replaceFirst(getIdentifier(), "").replaceAll(" ", "");
     }
 
     @Override
     public String getIdentifier() {
-        return "Help";
+        return "!help";
     }
 
     @Override
@@ -91,13 +96,15 @@ public class HelperBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public void getDescription() {
+    public String getDescription() {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Command " + command.getIdentifier() + ":");
+        embedBuilder.setTitle("Osaka Bot");
         String descriptionFormat = command.getDescription();
-        String descriptionText = String.format(descriptionFormat, prefix, argumentPrefix);
+        String descriptionText = String.format(descriptionFormat);
         embedBuilder.setDescription(descriptionText);
-        embedBuilder.setColor(ColorSchemeProperty.getColor());
+        embedBuilder.setColor(Color.RED);
+
+        return "CONSEQUENCES."; //make this the embedBuilder, it should be String-able
     }
 
     @Override

@@ -28,7 +28,7 @@ public interface Command {
      * condition based in implementation. It is important that this method should not throw an exception, otherwise this
      * exception would override the original exception.
      */
-    void onFailure();
+    void onFailure(String failureMessage);
 
     /**
      * @return true to declare the command has failed, this is called after execution and can be used to mark the command
@@ -57,7 +57,7 @@ public interface Command {
     /**
      * Method is to get the description of the actual command for the helpSpecific() method over in {@link HelperBot}
      */
-    void getDescription();
+    String getDescription();
 
     /**
      * @return list of roles this command is available to.
