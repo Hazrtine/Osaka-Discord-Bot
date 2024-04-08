@@ -1,2 +1,3 @@
 i've gotta actually start using the j4logger
 make the commands all implement AbstractCommand
+make a thread observing abort() into Command

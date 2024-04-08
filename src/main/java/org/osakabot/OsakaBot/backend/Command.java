@@ -1,12 +1,12 @@
 package org.osakabot.OsakaBot.backend;
 
+import net.dv8tion.jda.api.entities.Role;
+import org.osakabot.OsakaBot.commands.HelperBot;
 
-import net.robinfriedli.aiode.concurrent.CommandExecutionTask;
-import net.robinfriedli.aiode.concurrent.ThreadExecutionQueue;
+import java.util.List;
 
 /**
- * Interface for all user triggered actions. See {@link AbstractCommand} for text based commands that are interpreted
- * messages or {@link AbstractWidgetAction} for commands that are widgets that are interacted with by adding reactions to a message.
+ * Interface for all user triggered actions. See {@link AbstractWidgetAction} for commands that are widgets that are interacted with by adding reactions to a message.
  */
 public interface Command {
 
@@ -36,8 +36,6 @@ public interface Command {
      */
     boolean isFailed();
 
-    void setFailed(boolean failed);
-
     /**
      * @return the body of the command, for text based commands this is the input following the command name before
      * parsing.
@@ -57,16 +55,12 @@ public interface Command {
     String display();
 
     /**
-     * Abort command execution, must be called before the command begins execution, commonly from a command interceptor,
-     * possibly a scripted interceptor.
-     *
-     * @return true if the command has already been aborted
+     * Method is to get the description of the actual command for the helpSpecific() method over in {@link HelperBot}
      */
-    boolean abort();
+    void getDescription();
 
     /**
-     * @return true if command execution has been aborted
+     * @return list of roles this command is available to.
      */
-    boolean isAborted();
-
+    List<Role> permissionsList();
 }
