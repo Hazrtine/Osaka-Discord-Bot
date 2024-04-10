@@ -71,8 +71,7 @@ public class HelperBot extends ListenerAdapter implements Command {
     public void onFailure(String errorMessage) {
         LOGGER.debug(errorMessage);
         channel.sendMessage("Command Failed. Shape up man.").queue();
-        Member member = Osaka.getCreator();
-        channel.sendMessage("and uh...").mention(member).queue();
+        //channel.sendMessage("and uh...").mention(member).queue();
     }
 
     @Override

@@ -42,7 +42,7 @@ public class InformationBot extends ListenerAdapter implements Command { //this 
     public void onFailure(String errorMessage) {
         LOGGER.debug(errorMessage);
         channel.sendMessage("Command Failed. Shape up man.").queue();
-        channel.sendMessage("and uh...").mention(Osaka.getCreator()).queue();
+        //channel.sendMessage("and uh...").mention(Osaka.getCreator()).queue();
     }
 
     @Override

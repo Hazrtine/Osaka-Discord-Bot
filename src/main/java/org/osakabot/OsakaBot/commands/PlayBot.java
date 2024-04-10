@@ -1,5 +1,6 @@
 package org.osakabot.OsakaBot.commands;
 
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -17,25 +18,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class PlayBot extends ListenerAdapter implements Command {
 
-    private static final String flag = "!";
-    private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
+    //private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
     private TextChannel channel;
     private Message message;
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        System.out.println("message receieved.");
         String authorName = event.getAuthor().getName();
         String messageContent = event.getMessage().getContentRaw();
         channel = event.getChannel().asTextChannel();
         message = event.getMessage();
 
-        if (messageContent.contains(flag + "play") && !event.getAuthor().isBot())
-            onEchoCommand(event, event.getGuild(), messageContent.replaceFirst(flag, ""));
+        if (messageContent.equals("!play") && !event.getAuthor().isBot()) {
+            onEchoCommand(event, event.getGuild(), getCommandBody());
+            System.out.println("Caught!");
+        }
         else
-            System.out.println("Message from " + authorName + ": " + messageContent.replaceFirst(flag, ""));
+            System.out.println("Message from " + authorName + ": " + getCommandBody());
 
     }
 
@@ -96,6 +100,15 @@ public class PlayBot extends ListenerAdapter implements Command {
         event.getJDA().getTextChannels().forEach(channel -> {
             channel.sendMessage("saata andagi hours rn").queue();
         });
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Scanner Start!");
+            String message = "";
+            while (!message.equals("KILLBOTCONSOLE")) {
+                //now sure, i should really not be just straight up using my guild id but this is for like one server i do NOT care
+                message = sc.nextLine();
+                System.out.println(message);
+                channel.sendMessage(message).queue();
+            }
     }
 
     @Override
@@ -105,12 +118,12 @@ public class PlayBot extends ListenerAdapter implements Command {
 
     @Override
     public void onSuccess() {
-        LOGGER.debug("HelperBot Successful!");
+        //LOGGER.debug("HelperBot Successful!");
     }
 
     @Override
     public void onFailure(String failureMessage) {
-        LOGGER.debug("HelperBot Failed.{}", failureMessage);
+        //LOGGER.debug("HelperBot Failed.{}", failureMessage);
         channel.sendMessage("That command doesn't exist buddy.").queue();
     }
 
