@@ -22,7 +22,7 @@ import java.util.Scanner;
 
 public class PlayBot extends ListenerAdapter implements Command {
 
-    //private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
     private TextChannel channel;
     private Message message;
 
@@ -100,15 +100,6 @@ public class PlayBot extends ListenerAdapter implements Command {
         event.getJDA().getTextChannels().forEach(channel -> {
             channel.sendMessage("saata andagi hours rn").queue();
         });
-            Scanner sc = new Scanner(System.in);
-            System.out.println("Scanner Start!");
-            String message = "";
-            while (!message.equals("KILLBOTCONSOLE")) {
-                //now sure, i should really not be just straight up using my guild id but this is for like one server i do NOT care
-                message = sc.nextLine();
-                System.out.println(message);
-                channel.sendMessage(message).queue();
-            }
     }
 
     @Override
@@ -118,12 +109,12 @@ public class PlayBot extends ListenerAdapter implements Command {
 
     @Override
     public void onSuccess() {
-        //LOGGER.debug("HelperBot Successful!");
+        LOGGER.debug("HelperBot Successful!");
     }
 
     @Override
     public void onFailure(String failureMessage) {
-        //LOGGER.debug("HelperBot Failed.{}", failureMessage);
+        LOGGER.debug("HelperBot Failed.{}", failureMessage);
         channel.sendMessage("That command doesn't exist buddy.").queue();
     }
 
