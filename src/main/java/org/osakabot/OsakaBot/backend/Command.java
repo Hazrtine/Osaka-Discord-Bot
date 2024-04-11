@@ -1,5 +1,6 @@
 package org.osakabot.OsakaBot.backend;
 
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -59,10 +60,10 @@ public interface Command {
     /**
      * Method is to get the description of the actual command for the helpSpecific() method over in {@link HelperBot}
      */
-    String getDescription();
+    String getDescription(Command command);
 
     /**
      * @return list of roles this command is available to.
      */
-    List<Role> permissionsList();
+    List<Role> permissionsList(Guild guild, TextChannel channel);
 }

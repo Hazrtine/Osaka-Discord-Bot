@@ -12,44 +12,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 public class HelperBot extends ListenerAdapter implements Command {
     private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
-    private Guild guild;
-    private TextChannel channel;
-    private Message message;
-    private Command command;
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        guild = event.getGuild();
-        channel = event.getChannel().asTextChannel();
-        message = event.getMessage();
-        while (command != null) { //this is an * immensely *  stupid solution but i have to start testing
-            if (getCommandBody().equals("play"))
-                command = new PlayBot();
-            else if (getCommandBody().equals("help"))
-                command = new HelperBot();
-            else if (getCommandBody().equals("info") || getCommandBody().equals("information"))
-                command = new InformationBot();
-            else {
-                onFailure("No Such Command Exists");
+        Guild guild = event.getGuild();
+        TextChannel channel = event.getChannel().asTextChannel();
+        Message message = event.getMessage();
+        Command command = new GenericCommand();
+        try {
+            command = (Command) Class.forName(getCommandBody(message)).getDeclaredConstructor(new Class[]{String.class}).newInstance();
+        } catch (Exception e) {
+            if (!getCommandBody(message).contains("help")) {
+                LOGGER.error("No Such Command", e);
                 return;
             }
+            else
+                getDescription(command);
         }
         if (event.getMessage().getContentRaw().startsWith("!help")) {
             if (event.getMessage().getContentRaw().replaceAll(" ", "").length() > 5) {
                 event.getChannel().sendTyping().queue();
-                getDescription();
+                getDescription(command);
             } else {
                 event.getChannel().sendTyping().queue();
-                helpSpecific(event);
+                helpSpecific(event, command);
             }
         }
     }
 
-    private void helpSpecific(MessageReceivedEvent event) {
+    private void helpSpecific(MessageReceivedEvent event, Command command) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Command " + command.getIdentifier() + ":");
         String descriptionFormat = command.getDescription();
@@ -68,8 +64,8 @@ public class HelperBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public void onFailure(String errorMessage) {
-        LOGGER.debug(errorMessage);
+    public void onFailure(String errorMessage, TextChannel channel) {
+        LOGGER.error(errorMessage);
         channel.sendMessage("Command Failed. Shape up man.").queue();
         //channel.sendMessage("and uh...").mention(member).queue();
     }
@@ -80,7 +76,7 @@ public class HelperBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public String getCommandBody() {
+    public String getCommandBody(Message message) {
         return message.getContentRaw().replaceFirst(getIdentifier(), "").replaceAll(" ", "");
     }
 
@@ -90,12 +86,12 @@ public class HelperBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public String display() {
+    public String display(Message message) {
         return message.getContentRaw();
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(Command command) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Osaka Bot");
         String descriptionFormat = command.getDescription();
@@ -103,13 +99,26 @@ public class HelperBot extends ListenerAdapter implements Command {
         embedBuilder.setDescription(descriptionText);
         embedBuilder.setColor(Color.RED);
 
-        return "CONSEQUENCES."; //make this the embedBuilder, it should be String-able
+        return descriptionText;
     }
 
     @Override
-    public List<Role> permissionsList() {
+    public List<Role> permissionsList(Guild guild, TextChannel channel) {
         List<Role> roles = guild.getRoles();
         roles.removeIf(role -> !channel.getPermissionOverride(role).getAllowed().contains(Permission.MESSAGE_HISTORY) && !channel.getPermissionOverride(role).getAllowed().contains(Permission.MESSAGE_SEND));
         return roles;
     }
 }
+
+/*
+if (getCommandBody(message).equals("play"))
+            command = new PlayBot();
+        else if (getCommandBody(message).equals("help"))
+            command = new HelperBot();
+        else if (getCommandBody(message).equals("info") || getCommandBody(message).equals("information"))
+            command = new InformationBot();
+        else {
+                onFailure("No Such Command Exists", channel);
+                return;
+            }
+ */
