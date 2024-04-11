@@ -1,6 +1,8 @@
 package org.osakabot.OsakaBot.backend;
 
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.osakabot.OsakaBot.commands.HelperBot;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public interface Command {
      * condition based in implementation. It is important that this method should not throw an exception, otherwise this
      * exception would override the original exception.
      */
-    void onFailure(String failureMessage);
+    void onFailure(String failureMessage, TextChannel channel);
 
     /**
      * @return true to declare the command has failed, this is called after execution and can be used to mark the command
@@ -40,7 +42,7 @@ public interface Command {
      * @return the body of the command, for text based commands this is the input following the command name before
      * parsing.
      */
-    String getCommandBody();
+    String getCommandBody(Message message);
 
     /**
      * @return the identifier, for text based commands this would be the name of the command, of this command. This
@@ -52,7 +54,7 @@ public interface Command {
      * @return a visual representation of this Command. For text based commands this is equal to the raw text entered by
      * the user
      */
-    String display();
+    String display(Message message);
 
     /**
      * Method is to get the description of the actual command for the helpSpecific() method over in {@link HelperBot}
