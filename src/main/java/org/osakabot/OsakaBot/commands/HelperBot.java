@@ -35,7 +35,7 @@ public class HelperBot extends ListenerAdapter implements Command {
                 getDescription(command);
         }
         if (event.getMessage().getContentRaw().startsWith("!help")) {
-            if (event.getMessage().getContentRaw().replaceAll(" ", "").length() > 5) {
+            if (getCommandBody(message).replaceAll(" ", "").length() > 5) {
                 event.getChannel().sendTyping().queue();
                 getDescription(command);
             } else {
@@ -48,14 +48,9 @@ public class HelperBot extends ListenerAdapter implements Command {
     private void helpSpecific(MessageReceivedEvent event, Command command) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Command " + command.getIdentifier() + ":");
-        String descriptionFormat = command.getDescription();
+        String descriptionFormat = command.getDescription(command);
         String descriptionText = String.format(descriptionFormat);
         embedBuilder.setDescription(descriptionText);
-    }
-
-    @Override
-    public void doRun() throws Exception {
-        //uses onMessageReceieved
     }
 
     @Override
@@ -65,9 +60,9 @@ public class HelperBot extends ListenerAdapter implements Command {
 
     @Override
     public void onFailure(String errorMessage, TextChannel channel) {
-        LOGGER.error(errorMessage);
+        LOGGER.error("HelperBot error. \n\n{}", errorMessage);
         channel.sendMessage("Command Failed. Shape up man.").queue();
-        //channel.sendMessage("and uh...").mention(member).queue();
+        //i should make this mention me since this means there's a pretty bad error
     }
 
     @Override
@@ -82,7 +77,7 @@ public class HelperBot extends ListenerAdapter implements Command {
 
     @Override
     public String getIdentifier() {
-        return "!help";
+        return "help";
     }
 
     @Override

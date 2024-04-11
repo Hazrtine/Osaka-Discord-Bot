@@ -18,7 +18,7 @@ import java.util.Scanner;
 
 public class Osaka {
     private static final String botName = "OsakaBot";
-    //public static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class.getName());
+    public static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class.getName());
 
     public static void main(String[] arguments) throws Exception {
         JDA jda = JDABuilder.createDefault("MTE3MjcxODA5NzEwMzMzOTY2MQ.GoJmdo.4Ee4WCXfAdnZvoXy4LjHYT5lSvawLaNnqZkhxQ")
@@ -28,7 +28,7 @@ public class Osaka {
                 .addEventListeners(new HelperBot())
                 .build();
         //TODO: replace with system variable
-        //LOGGER.debug("Starting Bot!");
+        LOGGER.debug("Starting Bot!");
         System.out.println("Starting Bot!");
     }
 

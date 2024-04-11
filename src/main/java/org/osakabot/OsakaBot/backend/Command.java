@@ -14,13 +14,6 @@ import java.util.List;
 public interface Command {
 
     /**
-     * The actual logic to run for this command
-     *
-     * @throws Exception any exception thrown during execution
-     */
-    void doRun() throws Exception;
-
-    /**
      * Method called after {@link #doRun()} has run successfully. This is the case when no exception is thrown or,
      * depending on the implementation, other criteria, such as {@link #isFailed()} are met.
      */
