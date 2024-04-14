@@ -19,9 +19,10 @@ import java.util.Scanner;
 public class Osaka {
     private static final String botName = "OsakaBot";
     public static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class.getName());
+    private static JDA jda;
 
     public static void main(String[] arguments) throws Exception {
-        JDA jda = JDABuilder.createDefault("MTE3MjcxODA5NzEwMzMzOTY2MQ.GoJmdo.4Ee4WCXfAdnZvoXy4LjHYT5lSvawLaNnqZkhxQ")
+        jda = JDABuilder.createDefault("MTE3MjcxODA5NzEwMzMzOTY2MQ.GoJmdo.4Ee4WCXfAdnZvoXy4LjHYT5lSvawLaNnqZkhxQ")
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(new PlayBot())
                 .addEventListeners(new InformationBot())
@@ -33,4 +34,6 @@ public class Osaka {
     }
 
     public static String getBotName() { return botName; }
+
+    public static JDA getJDA() { return jda; }
 }

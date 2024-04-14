@@ -1,11 +1,13 @@
 package org.osakabot.OsakaBot.commands;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.ClientType;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import org.osakabot.OsakaBot.Osaka;
 import org.osakabot.OsakaBot.backend.Command;
 import net.dv8tion.jda.api.entities.Guild;
@@ -34,17 +36,26 @@ public class InformationBot extends ListenerAdapter implements Command { //this 
         event.getChannel().sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
         String requestedInfo = event.getMessage().getContentRaw();
         if (requestedInfo.contains("guild") || requestedInfo.contains("Guild"))
-            informationAboutGuild();
+            informationAboutGuild(event);
     }
 
-    public void informationAboutGuild(Guild guild, TextChannel channel) {
-        for (Guild guild : event.getJDA().getGuilds()) {
-            if (guild.getName().equalsIgnoreCase(guildName)) {
-                event.getChannel().sendMessage("Guild ID of " + guildName + " is: " + guild.getId()).queue();
-                return;
-            }
+    public void informationAboutGuild(MessageReceivedEvent event) {
+        TextChannel channel = event.getChannel().asTextChannel();
+        Guild guild = null;
+        for (Guild guild : Osaka.getJDA().getGuilds()) {
+            //first check if it was an ID given or a name, two different enhanced for-loops
         }
-        channel.sendMessage("Guild with name \"" + guildName + "\" not found.").queue();
+        //first of all, this bot needs to be having the ability to basically disguise itself as a player. could i make it that when a player speaks in this server
+        //it outputs it as text from OsakaBot? interesting
+        channel.sendMessage("Guild with name \"" + guild.getName() + "\" not found.").queue();
+    }
+
+    public void informationAboutUser(MessageReceivedEvent event) {
+
+    }
+
+    public void informationAboutOsaka(MessageReceivedEvent event) {
+        //SAAATA ANDAGIIIIIIIII
     }
 
 
