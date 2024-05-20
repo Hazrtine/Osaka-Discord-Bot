@@ -35,11 +35,11 @@ public class PlayBot extends ListenerAdapter implements Command {
         message = event.getMessage();
 
         if (messageContent.equals("!play") && !event.getAuthor().isBot()) {
-            onEchoCommand(event, event.getGuild(), getCommandBody());
+            onEchoCommand(event, event.getGuild(), getCommandBody(message));
             System.out.println("Caught!");
         }
         else
-            System.out.println("Message from " + authorName + ": " + getCommandBody());
+            System.out.println("Message from " + authorName + ": " + getCommandBody(message));
 
     }
 
@@ -61,7 +61,7 @@ public class PlayBot extends ListenerAdapter implements Command {
         MessageChannel messageChannel = event.getChannel();
         if (channel == null)
         {
-            onFailure(arg);
+            onFailure(arg, event.getGuildChannel().asTextChannel());
             return;
         }
         connectTo(channel);
@@ -97,12 +97,12 @@ public class PlayBot extends ListenerAdapter implements Command {
 
 
     public void onReady(ReadyEvent event) {
-        event.getJDA().getTextChannels().forEach(channel -> {
+        System.out.println(event.getJDA().getTextChannels().getFirst().canTalk());
+        if (event.getJDA().getTextChannels().getFirst().canTalk()) {
             channel.sendMessage("saata andagi hours rn").queue();
-        });
+        }
     }
 
-    @Override
     public void doRun() throws Exception {
         //uses onMessageReceieved
     }
@@ -113,9 +113,9 @@ public class PlayBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public void onFailure(String failureMessage) {
+    public void onFailure(String failureMessage, TextChannel channel) {
         LOGGER.debug("HelperBot Failed.{}", failureMessage);
-        channel.sendMessage("That command doesn't exist buddy.").queue();
+        channel.sendMessage("whar?").queue();
     }
 
     @Override
@@ -124,8 +124,9 @@ public class PlayBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public String getCommandBody() {
+    public String getCommandBody(Message message) {
         return message.getContentRaw().replaceFirst("!help", "").replaceAll(" ", "");
+
     }
 
     @Override
@@ -134,7 +135,7 @@ public class PlayBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public String display() {
+    public String display(Message message) {
         return message.getContentRaw();
     }
 

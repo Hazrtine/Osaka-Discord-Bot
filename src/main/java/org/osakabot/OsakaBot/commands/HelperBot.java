@@ -32,12 +32,12 @@ public class HelperBot extends ListenerAdapter implements Command {
                 return;
             }
             else
-                getDescription(command);
+                getDescription();
         }
         if (event.getMessage().getContentRaw().startsWith("!help")) {
             if (getCommandBody(message).replaceAll(" ", "").length() > 5) {
                 event.getChannel().sendTyping().queue();
-                getDescription(command);
+                getDescription();
             } else {
                 event.getChannel().sendTyping().queue();
                 helpSpecific(event, command);
@@ -48,7 +48,7 @@ public class HelperBot extends ListenerAdapter implements Command {
     private void helpSpecific(MessageReceivedEvent event, Command command) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Command " + command.getIdentifier() + ":");
-        String descriptionFormat = command.getDescription(command);
+        String descriptionFormat = command.getDescription();
         String descriptionText = String.format(descriptionFormat);
         embedBuilder.setDescription(descriptionText);
     }
@@ -86,10 +86,10 @@ public class HelperBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public String getDescription(Command command) {
+    public String getDescription() {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Osaka Bot");
-        String descriptionFormat = command.getDescription();
+        String descriptionFormat = "bawls"; //CHECK THIS
         String descriptionText = String.format(descriptionFormat);
         embedBuilder.setDescription(descriptionText);
         embedBuilder.setColor(Color.RED);
@@ -98,10 +98,11 @@ public class HelperBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public List<Role> permissionsList(Guild guild, TextChannel channel) {
-        List<Role> roles = guild.getRoles();
-        roles.removeIf(role -> !channel.getPermissionOverride(role).getAllowed().contains(Permission.MESSAGE_HISTORY) && !channel.getPermissionOverride(role).getAllowed().contains(Permission.MESSAGE_SEND));
-        return roles;
+    public List<Role> permissionsList() {
+        //List<Role> roles = guild.getRoles();
+        //roles.removeIf(role -> !channel.getPermissionOverride(role).getAllowed().contains(Permission.MESSAGE_HISTORY) && !channel.getPermissionOverride(role).getAllowed().contains(Permission.MESSAGE_SEND));
+        //return roles;
+        return null; //check for a different way of doing this, probably GenericCommand.java having it's own way of getting the roles idk
     }
 }
 

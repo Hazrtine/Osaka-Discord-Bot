@@ -25,6 +25,8 @@ public class GuildPlayer implements AudioSendHandler, AudioReceiveHandler {
         playAudio();
     }
 
+    //TODO: put the thing to find the actual song that someone wants here
+
     public void playAudio() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("/resources/UndergroundTesting.mp3"));

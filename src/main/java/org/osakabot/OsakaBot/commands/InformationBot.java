@@ -1,13 +1,11 @@
 package org.osakabot.OsakaBot.commands;
 
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.ClientType;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.DiscordLocale;
 import org.osakabot.OsakaBot.Osaka;
 import org.osakabot.OsakaBot.backend.Command;
 import net.dv8tion.jda.api.entities.Guild;
@@ -42,7 +40,7 @@ public class InformationBot extends ListenerAdapter implements Command { //this 
     public void informationAboutGuild(MessageReceivedEvent event) {
         TextChannel channel = event.getChannel().asTextChannel();
         Guild guild = null;
-        for (Guild guild : Osaka.getJDA().getGuilds()) {
+        for (Guild guilde : Osaka.getJDA().getGuilds()) {
             //first check if it was an ID given or a name, two different enhanced for-loops
         }
         //first of all, this bot needs to be having the ability to basically disguise itself as a player. could i make it that when a player speaks in this server
@@ -90,14 +88,15 @@ public class InformationBot extends ListenerAdapter implements Command { //this 
     }
 
     @Override
-    public String getDescription(Command command) {
+    public String getDescription() {
         return "Gets your information about any guild that you want. Stuff like owners, etc.";
     }
 
     @Override
-    public List<Role> permissionsList(Guild guild, TextChannel channel) {
-        List<Role> roles = guild.getRoles();
-        roles.removeIf(role -> !channel.getPermissionOverride(role).getAllowed().contains(Permission.MESSAGE_HISTORY));
-        return roles;
+    public List<Role> permissionsList() {
+        //List<Role> roles = guild.getRoles();
+        //roles.removeIf(role -> !channel.getPermissionOverride(role).getAllowed().contains(Permission.MESSAGE_HISTORY));
+        //return roles;
+        return null;
     }
 }

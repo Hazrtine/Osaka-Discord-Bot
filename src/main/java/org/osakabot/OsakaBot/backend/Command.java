@@ -53,10 +53,10 @@ public interface Command {
     /**
      * Method is to get the description of the actual command for the helpSpecific() method over in {@link HelperBot}
      */
-    String getDescription(Command command);
+    String getDescription();
 
     /**
      * @return list of roles this command is available to.
      */
-    List<Role> permissionsList(Guild guild, TextChannel channel);
+    List<Role> permissionsList();
 }

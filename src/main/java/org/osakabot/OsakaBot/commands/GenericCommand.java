@@ -9,7 +9,6 @@ import org.osakabot.OsakaBot.backend.Command;
 import java.util.List;
 
 public class GenericCommand implements Command {
-    @Override
     public void doRun() throws Exception {
 
     }
@@ -45,12 +44,12 @@ public class GenericCommand implements Command {
     }
 
     @Override
-    public String getDescription(Command command) {
+    public String getDescription() {
         return "";
     }
 
     @Override
-    public List<Role> permissionsList(Guild guild, TextChannel channel) {
+    public List<Role> permissionsList() {
         return List.of();
     }
 }
