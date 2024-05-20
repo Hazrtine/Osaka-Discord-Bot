@@ -16,7 +16,7 @@ public class GenericCommand implements Command {
 
     @Override
     public void onSuccess() {
-
+        System.out.println("Yippie!");
     }
 
     @Override
