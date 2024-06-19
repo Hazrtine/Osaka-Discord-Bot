@@ -79,7 +79,7 @@ public class InformationBot extends ListenerAdapter implements Command { //this 
 
     @Override
     public String getIdentifier() {
-        return "!help";
+        return "info";
     }
 
     @Override

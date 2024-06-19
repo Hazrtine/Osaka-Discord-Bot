@@ -131,7 +131,7 @@ public class PlayBot extends ListenerAdapter implements Command {
 
     @Override
     public String getIdentifier() {
-        return "!play";
+        return "play";
     }
 
     @Override
