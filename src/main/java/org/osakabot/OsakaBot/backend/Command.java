@@ -9,7 +9,8 @@ import org.osakabot.OsakaBot.commands.HelperBot;
 import java.util.List;
 
 /**
- * Interface for all user triggered actions. See {@link AbstractWidgetAction} for commands that are widgets that are interacted with by adding reactions to a message.
+ * Interface for all user triggered actions. See {@link AbstractWidgetAction} for commands that are widgets that are
+ * interacted with by adding reactions to a message.
  */
 public interface Command {
 
@@ -27,8 +28,8 @@ public interface Command {
     void onFailure(String failureMessage, TextChannel channel);
 
     /**
-     * @return true to declare the command has failed, this is called after execution and can be used to mark the command
-     * as failed even if no exception has been thrown.
+     * @return true to declare the command has failed, this is called after execution and can be used to mark the
+     * command as failed even if no exception has been thrown.
      */
     boolean isFailed();
 
