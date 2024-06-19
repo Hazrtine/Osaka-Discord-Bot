@@ -7,6 +7,6 @@ public class FunBot extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        event.getMessage()
+        //event.getMessage()
     }
 }
