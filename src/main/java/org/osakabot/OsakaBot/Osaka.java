@@ -47,7 +47,7 @@ public class Osaka {
                         throw new RuntimeException(e);
                     }
                 })
-                .map(f -> f.substring(f.lastIndexOf("getIdentifier()") + 20, f.substring(f.lastIndexOf("getIdentifier()") + 20).indexOf("\"")))
+                .map(f -> f.substring(f.lastIndexOf("getIdentifier() ") + 35, f.indexOf(";", f.lastIndexOf("getIdentifier()")) - 1))
                 .toList();
     }
 
