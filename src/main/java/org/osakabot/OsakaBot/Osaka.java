@@ -3,25 +3,20 @@ package org.osakabot.OsakaBot;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import org.osakabot.OsakaBot.backend.Command;
 import org.osakabot.OsakaBot.backend.ListenerIntersection;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.slf4j.helpers.NOPLogger.NOP_LOGGER;
 
 
 public class Osaka {
     private static final String botName = "OsakaBot";
-    public static final Logger LOGGER = NOP_LOGGER;
+    public static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
     private static JDA jda;
 
     public static void main(String[] args) {

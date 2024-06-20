@@ -1,4 +1,0 @@
-i've gotta actually start using the j4logger
-make the commands all implement AbstractCommand
-make a thread observing abort() into Command
-instead of the commands all being a listener, it could just be that i have one listener for all the commands
