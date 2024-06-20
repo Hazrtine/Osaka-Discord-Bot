@@ -15,12 +15,15 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class InformationBot extends ListenerAdapter implements Command { //this will be a bot that is able to grab information about certain Guilds
+public class InformationBot implements Command { //this will be a bot that is able to grab information about certain Guilds
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
 
+    public InformationBot(MessageReceivedEvent event) {
+        onMessageReceived(event);
+    }
 
-    @Override
+
     public void onMessageReceived(MessageReceivedEvent event) {
         Guild guild = event.getGuild();
         TextChannel channel = event.getChannel().asTextChannel();
@@ -69,6 +72,7 @@ public class InformationBot extends ListenerAdapter implements Command { //this 
 
     @Override
     public boolean isFailed() {
+        LOGGER.error("InformationBot Failed!");
         return false;
     }
 

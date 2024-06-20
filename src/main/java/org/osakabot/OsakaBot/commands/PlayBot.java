@@ -20,27 +20,19 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Scanner;
 
-public class PlayBot extends ListenerAdapter implements Command {
+public class PlayBot implements Command {
 
     private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
     private TextChannel channel;
     private Message message;
 
-    @Override
+    public PlayBot(MessageReceivedEvent event) {
+        onMessageReceived(event);
+    }
+
     public void onMessageReceived(MessageReceivedEvent event) {
-        System.out.println("message receieved.");
-        String authorName = event.getAuthor().getName();
-        String messageContent = event.getMessage().getContentRaw();
-        channel = event.getChannel().asTextChannel();
-        message = event.getMessage();
-
-        if (messageContent.equals("!play") && !event.getAuthor().isBot()) {
-            onEchoCommand(event, event.getGuild(), getCommandBody(message));
-            System.out.println("Caught!");
-        }
-        else
-            System.out.println("Message from " + authorName + ": " + getCommandBody(message));
-
+        onEchoCommand(event, event.getGuild(), getCommandBody(message));
+        System.out.println("Playing!");
     }
 
     private void onEchoCommand(MessageReceivedEvent event, Guild guild, String arg)
@@ -103,10 +95,6 @@ public class PlayBot extends ListenerAdapter implements Command {
         }
     }
 
-    public void doRun() throws Exception {
-        //uses onMessageReceieved
-    }
-
     @Override
     public void onSuccess() {
         LOGGER.debug("HelperBot Successful!");
@@ -120,6 +108,7 @@ public class PlayBot extends ListenerAdapter implements Command {
 
     @Override
     public boolean isFailed() {
+        LOGGER.error("HelperBot Failed!");
         return false;
     }
 

@@ -15,10 +15,14 @@ import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
-public class HelperBot extends ListenerAdapter implements Command {
+public class HelperBot implements Command {
     private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
 
-    @Override
+    public HelperBot(MessageReceivedEvent event) {
+        LOGGER.debug("HelperBot invoked!");
+        onMessageReceived(event);
+    }
+
     public void onMessageReceived(MessageReceivedEvent event) {
         Guild guild = event.getGuild();
         TextChannel channel = event.getChannel().asTextChannel();
