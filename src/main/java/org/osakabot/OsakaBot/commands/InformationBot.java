@@ -36,8 +36,14 @@ public class InformationBot implements Command { //this will be a bot that is ab
     public void messageResponse(MessageReceivedEvent event) {
         event.getChannel().sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
         String requestedInfo = event.getMessage().getContentRaw();
-        if (requestedInfo.contains("guild") || requestedInfo.contains("Guild"))
-            informationAboutGuild(event);
+
+        switch (requestedInfo.toLowerCase()) {
+            case "guild":
+                informationAboutGuild(event);
+            case "user":
+                informationAboutUser(event);
+            case "osaka", "osaker":
+        }       informationAboutOsaka(event);
     }
 
     public void informationAboutGuild(MessageReceivedEvent event) {
