@@ -6,9 +6,14 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class FunThings {
 
-    private MessageReceivedEvent event;
 
     public FunThings(MessageReceivedEvent event) {
-        this.event = event;
+        String message = event.getMessage().getContentRaw();
+        switch (message) {
+            case "h":
+                event.getChannel().sendMessage("h").queue();
+            case "i love this bot":
+                event.getChannel().sendMessage("https://tenor.com/view/azumanga-osaka-wave-hi-gif-26415274").queue();
+        }
     }
 }

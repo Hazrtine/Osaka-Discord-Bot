@@ -25,8 +25,6 @@ public class InformationBot implements Command { //this will be a bot that is ab
 
 
     public void onMessageReceived(MessageReceivedEvent event) {
-        Guild guild = event.getGuild();
-        TextChannel channel = event.getChannel().asTextChannel();
         Message message = event.getMessage();
 
         if (message.getContentRaw().contains("!info"))
@@ -48,17 +46,12 @@ public class InformationBot implements Command { //this will be a bot that is ab
 
     public void informationAboutGuild(MessageReceivedEvent event) {
         TextChannel channel = event.getChannel().asTextChannel();
-        Guild guild = null;
-        for (Guild guilde : Osaka.getJDA().getGuilds()) {
-            //first check if it was an ID given or a name, two different enhanced for-loops
-        }
-        //first of all, this bot needs to be having the ability to basically disguise itself as a player. could i make it that when a player speaks in this server
-        //it outputs it as text from OsakaBot? interesting
-        channel.sendMessage("Guild with name \"" + guild.getName() + "\" not found.").queue();
+
     }
 
     public void informationAboutUser(MessageReceivedEvent event) {
-
+        event.getChannel().sendMessage("Who're you talkin' about?").queue();
+        //just get the next message that it
     }
 
     public void informationAboutOsaka(MessageReceivedEvent event) {

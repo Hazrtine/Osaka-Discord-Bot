@@ -20,11 +20,10 @@ public class Osaka {
     private static JDA jda;
 
     public static void main(String[] args) {
-        jda = JDABuilder.createDefault("MTE3MjcxODA5NzEwMzMzOTY2MQ.GoJmdo.4Ee4WCXfAdnZvoXy4LjHYT5lSvawLaNnqZkhxQ")
+        jda = JDABuilder.createDefault(System.getenv("OsakaKey"))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(new ListenerIntersection())
                 .build();
-        //TODO: replace with system variable
         LOGGER.debug("Starting Bot!");
         System.out.println("Starting Bot!");
         System.out.println(listOfCommandIdentifiers());
