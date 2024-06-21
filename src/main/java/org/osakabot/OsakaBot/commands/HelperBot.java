@@ -28,16 +28,6 @@ public class HelperBot implements Command {
         TextChannel channel = event.getChannel().asTextChannel();
         Message message = event.getMessage();
         Command command = new GenericCommand();
-        try {
-            command = (Command) Class.forName(getCommandBody(message)).getDeclaredConstructor(new Class[]{String.class}).newInstance();
-        } catch (Exception e) {
-            if (!getCommandBody(message).contains("help")) {
-                LOGGER.error("No Such Command\n{}", message, e);
-                return;
-            }
-            else
-                getDescription();
-        }
         if (event.getMessage().getContentRaw().startsWith("!help")) {
             if (getCommandBody(message).replaceAll(" ", "").length() > 5) {
                 event.getChannel().sendTyping().queue();
@@ -76,7 +66,7 @@ public class HelperBot implements Command {
 
     @Override
     public String getCommandBody(Message message) {
-        return message.getContentRaw().replaceFirst(getIdentifier(), "").replaceAll(" ", "");
+        return message.getContentRaw().replaceFirst(getIdentifier(), "").replaceAll(" *!*", "");
     }
 
     @Override
