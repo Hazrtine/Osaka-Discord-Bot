@@ -32,7 +32,7 @@ public class HelperBot implements Command {
             command = (Command) Class.forName(getCommandBody(message)).getDeclaredConstructor(new Class[]{String.class}).newInstance();
         } catch (Exception e) {
             if (!getCommandBody(message).contains("help")) {
-                LOGGER.error("No Such Command", e);
+                LOGGER.error("No Such Command\n{}", message, e);
                 return;
             }
             else

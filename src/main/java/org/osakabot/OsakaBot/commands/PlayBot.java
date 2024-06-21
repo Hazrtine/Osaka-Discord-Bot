@@ -24,14 +24,14 @@ public class PlayBot implements Command {
 
     private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
     private TextChannel channel;
-    private Message message;
 
     public PlayBot(MessageReceivedEvent event) {
         onMessageReceived(event);
+        LOGGER.debug(event.getMessage().getContentRaw());
     }
 
     public void onMessageReceived(MessageReceivedEvent event) {
-        onEchoCommand(event, event.getGuild(), getCommandBody(message));
+        onEchoCommand(event, event.getGuild(), getCommandBody(event.getMessage()));
         System.out.println("Playing!");
     }
 
@@ -91,7 +91,7 @@ public class PlayBot implements Command {
     public void onReady(ReadyEvent event) {
         System.out.println(event.getJDA().getTextChannels().getFirst().canTalk());
         if (event.getJDA().getTextChannels().getFirst().canTalk()) {
-            channel.sendMessage("saata andagi hours rn").queue();
+            event.getJDA().getTextChannels().getFirst().sendMessage("saata andagi hours rn").queue();
         }
     }
 

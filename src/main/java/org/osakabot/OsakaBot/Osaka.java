@@ -30,7 +30,9 @@ public class Osaka {
         System.out.println(listOfCommandIdentifiers());
     }
 
-    public static String getBotName() { return botName; }
+    public static String getBotName() {
+        return botName;
+    }
 
     public static List<String> listOfCommandIdentifiers() {
         return Stream.of(new File("src/main/java/org/osakabot/OsakaBot/commands").listFiles())
@@ -46,5 +48,7 @@ public class Osaka {
                 .toList();
     }
 
-    public static JDA getJDA() { return jda; }
+    public static JDA getJDA() {
+        return jda;
+    }
 }
