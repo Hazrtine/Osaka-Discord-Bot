@@ -1,21 +1,25 @@
 package org.osakabot.OsakaBot.commands;
 
-import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.osakabot.OsakaBot.Osaka;
 import org.osakabot.OsakaBot.backend.Command;
-import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import java.awt.*;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
-public class InformationBot implements Command { //this will be a bot that is able to grab information about certain Guilds
+public class InformationBot implements Command {
+
+    private static Map<Long, CompletableFuture<String>> awaitingResponse;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
 
@@ -56,6 +60,42 @@ public class InformationBot implements Command { //this will be a bot that is ab
 
     public void informationAboutOsaka(MessageReceivedEvent event) {
         //SAAATA ANDAGIIIIIIIII
+    }
+
+    public static void futureMessage(MessageReceivedEvent event) {
+        MessageChannel channel = event.getChannel();
+        String message = event.getMessage().getContentRaw();
+        long userId = event.getAuthor().getIdLong();
+
+        // Check if this user is awaiting a response
+        if (awaitingResponse.containsKey(userId)) {
+            CompletableFuture<String> future = awaitingResponse.get(userId);
+            future.complete(message);
+            awaitingResponse.remove(userId);
+            return;
+        }
+
+        // If the user sends the "!info" command
+        if (message.equalsIgnoreCase("!info")) {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setTitle("Information Request")
+                    .setDescription("What kind of info do you want?")
+                    .setColor(Color.BLUE);
+
+            channel.sendMessageEmbeds(embedBuilder.build()).queue();
+
+            CompletableFuture<String> responseFuture = new CompletableFuture<>();
+            awaitingResponse.put(userId, responseFuture);
+
+            responseFuture.orTimeout(30, TimeUnit.SECONDS).whenComplete((response, throwable) -> {
+                if (throwable != null) {
+                    channel.sendMessage("You took too long to respond. Please try again.").queue();
+                } else {
+                    handleUserResponse(channel, response);
+                }
+                awaitingResponse.remove(userId);
+            });
+        }
     }
 
 
