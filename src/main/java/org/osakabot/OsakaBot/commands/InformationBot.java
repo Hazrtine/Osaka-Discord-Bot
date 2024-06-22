@@ -1,6 +1,5 @@
 package org.osakabot.OsakaBot.commands;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +39,7 @@ public class InformationBot implements Command {
         event.getChannel().sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
         String requestedInfo = event.getMessage().getContentRaw();
 
+
         switch (requestedInfo.toLowerCase()) {
             case "guild":
                 informationAboutGuild(event);
@@ -57,14 +56,14 @@ public class InformationBot implements Command {
 
     public void informationAboutUser(MessageReceivedEvent event) {
         event.getChannel().sendMessage("Who're you talkin' about?").queue();
-        //just get the next message that it
+        futureMessage(event);
     }
 
     public void informationAboutOsaka(MessageReceivedEvent event) {
         //SAAATA ANDAGIIIIIIIII
     }
 
-    public static void futureMessage(MessageReceivedEvent event) {
+    public static boolean futureMessage(MessageReceivedEvent event) {
         MessageChannel channel = event.getChannel();
         String message = event.getMessage().getContentRaw();
         long userId = event.getAuthor().getIdLong();
@@ -74,16 +73,8 @@ public class InformationBot implements Command {
             CompletableFuture<String> future = awaitingResponse.get(userId);
             future.complete(message);
             awaitingResponse.remove(userId);
-            return;
+            return true;
         }
-
-        // If the user sends the "!info" command
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Information Request")
-                .setDescription("What kind of info do you want?")
-                .setColor(Color.BLUE);
-
-        channel.sendMessageEmbeds(embedBuilder.build()).queue();
 
         CompletableFuture<String> responseFuture = new CompletableFuture<>();
         awaitingResponse.put(userId, responseFuture);
