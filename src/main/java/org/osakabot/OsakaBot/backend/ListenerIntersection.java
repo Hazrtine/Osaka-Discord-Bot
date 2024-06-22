@@ -7,26 +7,27 @@ import org.osakabot.OsakaBot.commands.HelperBot;
 import org.osakabot.OsakaBot.commands.InformationBot;
 import org.osakabot.OsakaBot.commands.PlayBot;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
 public class ListenerIntersection extends ListenerAdapter {
 
-    private static MessageReceivedEvent event;
-
     @Override
-    public void onMessageReceived(MessageReceivedEvent evente) {
+    public void onMessageReceived(MessageReceivedEvent event) {
         Command cmd;
-        event = evente;
         MessagesToConsole(event);
         String message =  event.getMessage().getContentRaw();
         FunThings fT = new FunThings(event);
         if (message.charAt(0) == '!') { //TODO: this sucks, fix this into something dynamic
             if (message.contains("help")) {
-                cmd = new HelperBot(event);
+                //cmd = new HelperBot(event); for now this is outta here
             }
             else if (message.contains("play")) {
                 cmd = new PlayBot(event);
             }
             else if (message.contains("info")) {
-                cmd = new InformationBot(event);
+                //cmd = new InformationBot(event);
             }
             }
         }

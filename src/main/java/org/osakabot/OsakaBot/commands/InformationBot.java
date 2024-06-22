@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.osakabot.OsakaBot.Osaka;
 import org.osakabot.OsakaBot.backend.Command;
 import org.slf4j.Logger;
@@ -17,32 +18,33 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class InformationBot implements Command {
+public class InformationBot extends ListenerAdapter implements Command {
 
     private static final Map<Long, CompletableFuture<String>> awaitingResponse = new HashMap<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
 
-    public InformationBot(MessageReceivedEvent event) {
-        onMessageReceived(event);
-    }
+    public InformationBot() {}
 
-
+    @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         Message message = event.getMessage();
-        if (!futureMessage(event).isEmpty())
-            switch (message.getContentRaw().toLowerCase()) {
-                case "guild":
-                    informationAboutGuild(event);
+        if (message.getContentRaw().equalsIgnoreCase("!info")) {
+            if (awaitingResponse.isEmpty()) {
+                switch (message.getContentRaw().toLowerCase()) {
+                    case "guild":
+                        informationAboutGuild(event);
                         awaitingResponse.put(message.getAuthor().getIdLong(), new CompletableFuture<>());
-                        LOGGER.debug(awaitingResponse.toString());
-                case "user":
-                    informationAboutUser(event);
-                case "osaka", "osaker":
-                    informationAboutOsaka(event);
+                        LOGGER.debug("this is the awaiting fellers, {}", awaitingResponse);
+                    case "user":
+                        informationAboutUser(event);
+                    case "osaka", "osaker":
+                        informationAboutOsaka(event);
+                }
+            } else {
+                event.getChannel().sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
             }
-        else
-            event.getChannel().sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
+        }
     }
 
     public void informationAboutGuild(MessageReceivedEvent event) {
@@ -59,7 +61,7 @@ public class InformationBot implements Command {
         //SAAATA ANDAGIIIIIIIII
     }
 
-    public static String futureMessage(MessageReceivedEvent event) {
+    public static void futureMessage(MessageReceivedEvent event) {
         MessageChannel channel = event.getChannel();
         String message = event.getMessage().getContentRaw();
         long userId = event.getAuthor().getIdLong();
@@ -70,17 +72,12 @@ public class InformationBot implements Command {
             future.complete(message);
             awaitingResponse.remove(userId);
             LOGGER.debug(message);
-            return message;
         }
 
-        CompletableFuture<String> responseFuture = new CompletableFuture<>();
-        awaitingResponse.put(userId, responseFuture);
-
-        responseFuture.orTimeout(30, TimeUnit.SECONDS).whenComplete((response, throwable) -> {
+        awaitingResponse.get(userId).orTimeout(30, TimeUnit.SECONDS).whenComplete((response, throwable) -> {
             channel.sendMessage("You took too long to respond. Please try again.").queue();
             awaitingResponse.remove(userId);
         });
-        return "";
     }
 
 
