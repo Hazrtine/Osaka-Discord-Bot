@@ -1,0 +1,1 @@
+Osaka is a discord bot for The Old Tavern server. This might be expanded into an actual discord bot, but that's in the far future.
