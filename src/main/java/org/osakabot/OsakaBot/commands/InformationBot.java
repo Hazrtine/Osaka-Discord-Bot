@@ -30,23 +30,19 @@ public class InformationBot implements Command {
 
     public void onMessageReceived(MessageReceivedEvent event) {
         Message message = event.getMessage();
-
-        if (message.getContentRaw().contains("!info"))
-            messageResponse(event);
-    }
-
-    public void messageResponse(MessageReceivedEvent event) {
-        event.getChannel().sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
-        String requestedInfo = event.getMessage().getContentRaw();
-
-
-        switch (requestedInfo.toLowerCase()) {
-            case "guild":
-                informationAboutGuild(event);
-            case "user":
-                informationAboutUser(event);
-            case "osaka", "osaker":
-        }       informationAboutOsaka(event);
+        if (!futureMessage(event).isEmpty())
+            switch (message.getContentRaw().toLowerCase()) {
+                case "guild":
+                    informationAboutGuild(event);
+                        awaitingResponse.put(message.getAuthor().getIdLong(), new CompletableFuture<>());
+                        LOGGER.debug(awaitingResponse.toString());
+                case "user":
+                    informationAboutUser(event);
+                case "osaka", "osaker":
+                    informationAboutOsaka(event);
+            }
+        else
+            event.getChannel().sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
     }
 
     public void informationAboutGuild(MessageReceivedEvent event) {
@@ -63,7 +59,7 @@ public class InformationBot implements Command {
         //SAAATA ANDAGIIIIIIIII
     }
 
-    public static boolean futureMessage(MessageReceivedEvent event) {
+    public static String futureMessage(MessageReceivedEvent event) {
         MessageChannel channel = event.getChannel();
         String message = event.getMessage().getContentRaw();
         long userId = event.getAuthor().getIdLong();
@@ -73,16 +69,18 @@ public class InformationBot implements Command {
             CompletableFuture<String> future = awaitingResponse.get(userId);
             future.complete(message);
             awaitingResponse.remove(userId);
-            return true;
+            LOGGER.debug(message);
+            return message;
         }
 
         CompletableFuture<String> responseFuture = new CompletableFuture<>();
         awaitingResponse.put(userId, responseFuture);
 
-        responseFuture.orTimeout(1, TimeUnit.SECONDS).whenComplete((response, throwable) -> {
+        responseFuture.orTimeout(30, TimeUnit.SECONDS).whenComplete((response, throwable) -> {
             channel.sendMessage("You took too long to respond. Please try again.").queue();
             awaitingResponse.remove(userId);
         });
+        return "";
     }
 
 
