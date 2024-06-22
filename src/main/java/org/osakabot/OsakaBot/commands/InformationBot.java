@@ -13,13 +13,15 @@ import org.slf4j.LoggerFactory;
 
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class InformationBot implements Command {
 
-    private static Map<Long, CompletableFuture<String>> awaitingResponse;
+    private static final Map<Long, CompletableFuture<String>> awaitingResponse = new HashMap<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
 
@@ -76,26 +78,20 @@ public class InformationBot implements Command {
         }
 
         // If the user sends the "!info" command
-        if (message.equalsIgnoreCase("!info")) {
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle("Information Request")
-                    .setDescription("What kind of info do you want?")
-                    .setColor(Color.BLUE);
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle("Information Request")
+                .setDescription("What kind of info do you want?")
+                .setColor(Color.BLUE);
 
-            channel.sendMessageEmbeds(embedBuilder.build()).queue();
+        channel.sendMessageEmbeds(embedBuilder.build()).queue();
 
-            CompletableFuture<String> responseFuture = new CompletableFuture<>();
-            awaitingResponse.put(userId, responseFuture);
+        CompletableFuture<String> responseFuture = new CompletableFuture<>();
+        awaitingResponse.put(userId, responseFuture);
 
-            responseFuture.orTimeout(30, TimeUnit.SECONDS).whenComplete((response, throwable) -> {
-                if (throwable != null) {
-                    channel.sendMessage("You took too long to respond. Please try again.").queue();
-                } else {
-                    handleUserResponse(channel, response);
-                }
-                awaitingResponse.remove(userId);
-            });
-        }
+        responseFuture.orTimeout(1, TimeUnit.SECONDS).whenComplete((response, throwable) -> {
+            channel.sendMessage("You took too long to respond. Please try again.").queue();
+            awaitingResponse.remove(userId);
+        });
     }
 
 
