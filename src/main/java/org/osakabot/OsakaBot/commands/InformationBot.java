@@ -1,9 +1,12 @@
 package org.osakabot.OsakaBot.commands;
 
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.osakabot.OsakaBot.Osaka;
@@ -15,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -27,9 +31,21 @@ public class InformationBot extends ListenerAdapter implements Command {
     public InformationBot() {}
 
     @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        if (event.getName().equals("info")) {
+            informationProcess
+            }
+    }
+
+    @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         Message message = event.getMessage();
-        if (message.getContentRaw().equalsIgnoreCase("!info")) {
+        if (message.getContentRaw().equalsIgnoreCase("!info"))
+            informationProcessing(event.getMessage());
+
+        }
+
+    public void informationProcessing(Message message, Guild guild) {
             if (awaitingResponse.isEmpty()) {
                 switch (message.getContentRaw().toLowerCase()) {
                     case "guild":
@@ -44,9 +60,7 @@ public class InformationBot extends ListenerAdapter implements Command {
             } else {
                 event.getChannel().sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
             }
-        }
     }
-
     public void informationAboutGuild(MessageReceivedEvent event) {
         TextChannel channel = event.getChannel().asTextChannel();
 
