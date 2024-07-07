@@ -8,6 +8,12 @@ import java.util.Objects;
 
 public class FunThings extends ListenerAdapter {
 
+    public FunThings() {
+
+    }
+
+    public void onMessageReceived(MessageReceivedEvent event) {}
+
 
     public FunThings(MessageReceivedEvent event) {
         String message = event.getMessage().getContentRaw();
@@ -24,7 +30,8 @@ public class FunThings extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equals("ping")) {
-            event.getChannel().asTextChannel().sendMessage("Pong!").queue();
+            event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
+            event.getHook().sendMessage("Pong!").queue();
         }
     }
 
