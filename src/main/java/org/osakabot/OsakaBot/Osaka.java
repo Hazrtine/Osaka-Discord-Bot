@@ -2,17 +2,22 @@ package org.osakabot.OsakaBot;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.osakabot.OsakaBot.backend.ListenerIntersection;
 import org.osakabot.OsakaBot.commands.InformationBot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
+
+import static java.nio.file.Files.readString;
 
 
 public class Osaka {
@@ -29,6 +34,7 @@ public class Osaka {
         LOGGER.debug("Starting Bot!");
         System.out.println("Starting Bot!");
         System.out.println(listOfCommandIdentifiers());
+        registerCommands();
     }
 
     public static String getBotName() {
@@ -36,11 +42,11 @@ public class Osaka {
     }
 
     public static List<String> listOfCommandIdentifiers() {
-        return Stream.of(new File("src/main/java/org/osakabot/OsakaBot/commands").listFiles())
+        return Stream.of(Objects.requireNonNull(new File("src/main/java/org/osakabot/OsakaBot/commands").listFiles()))
                 .filter(f -> f.getName().contains("Bot"))
                 .map(f -> {
                     try {
-                        return Files.readString(f.toPath());
+                        return readString(f.toPath());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -51,5 +57,15 @@ public class Osaka {
 
     public static JDA getJDA() {
         return jda;
+    }
+
+    private static void registerCommands() {
+        jda.updateCommands().addCommands(
+                Commands.slash("ping", "Ping the bot."),
+                Commands.slash("info", "Get Certain Information from the Bot")
+                        .addOption(OptionType.STRING, "guild", "Do you want information about a certain guild? Type it in here.")
+                        .addOption(OptionType.BOOLEAN, "osaka", "Do you want to know more about the bot?")
+                        .addOption(OptionType.USER, "user", "You want to know more about a user? Input their username or their UserID!")
+                ).queue();
     }
 }
