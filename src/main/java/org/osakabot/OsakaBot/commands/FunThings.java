@@ -25,7 +25,8 @@ public class FunThings extends ListenerAdapter {
         if (!event.getAuthor().isBot())
             switch (message) {
                 case "h":
-                    event.getChannel().sendMessage("h").queue();
+                    if ((int) (Math.random() * 3) == 2)
+                        event.getChannel().sendMessage("h").queue();
                     break;
                 case "i love this bot":
                     event.getChannel().sendMessage(Objects.requireNonNull(AzumangaQuoteGenerator.generate())).queue();
