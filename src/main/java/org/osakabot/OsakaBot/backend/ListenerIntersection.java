@@ -15,22 +15,8 @@ public class ListenerIntersection extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        Command cmd;
-        MessagesToConsole(event);
-        String message =  event.getMessage().getContentRaw();
-        FunThings fT = new FunThings(event);
-        if (message.charAt(0) == '!') { //TODO: this sucks, fix this into something dynamic
-            if (message.contains("help")) {
-                //cmd = new HelperBot(event); for now this is outta here
-            }
-            else if (message.contains("play")) {
-                cmd = new PlayBot(event);
-            }
-            else if (message.contains("info")) {
-                //cmd = new InformationBot(event);
-            }
-            }
-        }
+
+    }
 
     private void MessagesToConsole(MessageReceivedEvent event) {
         System.out.println(event.getMessage().getContentRaw() + "\nFrom: " + event.getAuthor().getName());
