@@ -47,7 +47,7 @@ public class PlayBot implements Command {
         {
             List<VoiceChannel> channels = guild.getVoiceChannelsByName(arg, true);
             if (!channels.isEmpty())
-                channel = channels.getFirst();
+                channel = channels.get(0);
         }
 
         MessageChannel messageChannel = event.getChannel();
@@ -89,11 +89,8 @@ public class PlayBot implements Command {
 
 
     public void onReady(ReadyEvent event) {
-        System.out.println(event.getJDA().getTextChannels().getFirst().canTalk());
-        if (event.getJDA().getTextChannels().getFirst().canTalk()) {
-            event.getJDA().getTextChannels().getFirst().sendMessage("saata andagi hours rn").queue();
+        //make an announcement of being alive
         }
-    }
 
     @Override
     public void onSuccess() {
