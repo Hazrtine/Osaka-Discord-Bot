@@ -3,16 +3,22 @@ package org.osakabot.OsakaBot.commands;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-
-import java.util.Objects;
+import org.osakabot.OsakaBot.Osaka;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FunThings extends ListenerAdapter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
 
     public FunThings() {
 
     }
 
-    public void onMessageReceived(MessageReceivedEvent event) {}
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        LOGGER.debug("FunThings Amirite");
+    }
 
 
     public FunThings(MessageReceivedEvent event) {
@@ -23,7 +29,7 @@ public class FunThings extends ListenerAdapter {
                     event.getChannel().sendMessage("h").queue();
                     break;
                 case "i love this bot":
-                    event.getChannel().sendMessage("fellow knucklehead").queue();
+                    event.getChannel().sendMessage("fellow knucklehead").queue(); //it'd be kinda funny to have a database of all the lines that was said in azumanga and just choose from there
             }
     }
 
