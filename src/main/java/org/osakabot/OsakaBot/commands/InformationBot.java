@@ -1,9 +1,6 @@
 package org.osakabot.OsakaBot.commands;
 
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -33,7 +30,7 @@ public class InformationBot extends ListenerAdapter implements Command {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equals("info")) {
-            informationProcess
+            informationProcessing(Objects.requireNonNull(event.getInteraction().getOption("info")).getAsString() ,event.getGuild(), event.getUser(), event.getChannel().asTextChannel());
             }
     }
 
@@ -41,45 +38,40 @@ public class InformationBot extends ListenerAdapter implements Command {
     public void onMessageReceived(MessageReceivedEvent event) {
         Message message = event.getMessage();
         if (message.getContentRaw().equalsIgnoreCase("!info"))
-            informationProcessing(event.getMessage());
+            informationProcessing(event.getMessage().getContentRaw(), event.getGuild(), event.getAuthor(), event.getChannel().asTextChannel());
 
         }
 
-    public void informationProcessing(Message message, Guild guild) {
-            if (awaitingResponse.isEmpty()) {
-                switch (message.getContentRaw().toLowerCase()) {
-                    case "guild":
-                        informationAboutGuild(event);
-                        awaitingResponse.put(message.getAuthor().getIdLong(), new CompletableFuture<>());
-                        LOGGER.debug("this is the awaiting fellers, {}", awaitingResponse);
-                    case "user":
-                        informationAboutUser(event);
-                    case "osaka", "osaker":
-                        informationAboutOsaka(event);
-                }
-            } else {
-                event.getChannel().sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
+    private void informationProcessing(String message, Guild guild, User user, TextChannel channel) {
+        if (awaitingResponse.isEmpty()) {
+            switch (message) {
+                case "guild":
+                    informationAboutGuild(guild, channel);
+                    awaitingResponse.put(user.getIdLong(), new CompletableFuture<>());
+                    LOGGER.debug("this is the awaiting fellers, {}", awaitingResponse);
+                case "user":
+                    informationAboutUser(channel, message, user.getIdLong());
+                case "osaka", "osaker":
+                    informationAboutOsaka();
             }
+        } else {
+            channel.sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
+        }
     }
-    public void informationAboutGuild(MessageReceivedEvent event) {
-        TextChannel channel = event.getChannel().asTextChannel();
+    public void informationAboutGuild(Guild guild, TextChannel channel) {
 
     }
 
-    public void informationAboutUser(MessageReceivedEvent event) {
-        event.getChannel().sendMessage("Who're you talkin' about?").queue();
-        futureMessage(event);
+    public void informationAboutUser(TextChannel channel, String message, long userId) {
+        channel.sendMessage("Who're you talkin' about?").queue();
+        futureMessage(channel, message, userId);
     }
 
-    public void informationAboutOsaka(MessageReceivedEvent event) {
+    public void informationAboutOsaka() {
         //SAAATA ANDAGIIIIIIIII
     }
 
-    public static void futureMessage(MessageReceivedEvent event) {
-        MessageChannel channel = event.getChannel();
-        String message = event.getMessage().getContentRaw();
-        long userId = event.getAuthor().getIdLong();
-
+    public static void futureMessage(MessageChannel channel, String message, long userId) {
         // Check if this user is awaiting a response
         if (awaitingResponse.containsKey(userId)) {
             CompletableFuture<String> future = awaitingResponse.get(userId);
