@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.osakabot.OsakaBot.backend.ListenerIntersection;
+import org.osakabot.OsakaBot.commands.FunThings;
 import org.osakabot.OsakaBot.commands.InformationBot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ public class Osaka {
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(new ListenerIntersection())
                 .addEventListeners(new InformationBot())
+                .addEventListeners(new FunThings())
                 .build();
         LOGGER.debug("Starting Bot!");
         System.out.println("Starting Bot!");
