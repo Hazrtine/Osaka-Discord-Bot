@@ -1,0 +1,3 @@
+either
+    a. get rid of ListenerIntersection
+    b. rework how ListenerIntersection works, more like a ListenerRegistry
