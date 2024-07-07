@@ -4,8 +4,11 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.osakabot.OsakaBot.Osaka;
+import org.osakabot.OsakaBot.backend.AzumangaQuoteGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 public class FunThings extends ListenerAdapter {
 
@@ -25,7 +28,7 @@ public class FunThings extends ListenerAdapter {
                     event.getChannel().sendMessage("h").queue();
                     break;
                 case "i love this bot":
-                    event.getChannel().sendMessage("fellow knucklehead").queue(); //it'd be kinda funny to have a database of all the lines that was said in azumanga and just choose from there
+                    event.getChannel().sendMessage(Objects.requireNonNull(AzumangaQuoteGenerator.generate())).queue();
             }
     }
 
