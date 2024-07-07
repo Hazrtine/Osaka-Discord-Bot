@@ -24,7 +24,7 @@ public class AzumangaQuoteGenerator {
         Pattern pattern = Pattern.compile(regex);
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath));
-             Scanner scanner = new Scanner(System.in)) {
+             Scanner ignored = new Scanner(System.in)) {
 
         StringBuilder fileContent = new StringBuilder();
         String line;
