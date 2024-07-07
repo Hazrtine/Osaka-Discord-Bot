@@ -18,10 +18,6 @@ public class FunThings extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         LOGGER.debug("FunThings Amirite");
-    }
-
-
-    public FunThings(MessageReceivedEvent event) {
         String message = event.getMessage().getContentRaw();
         if (!event.getAuthor().isBot())
             switch (message) {
