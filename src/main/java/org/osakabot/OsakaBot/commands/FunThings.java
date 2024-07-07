@@ -1,8 +1,9 @@
 package org.osakabot.OsakaBot.commands;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class FunThings {
+public class FunThings extends ListenerAdapter {
 
 
     public FunThings(MessageReceivedEvent event) {
@@ -16,4 +17,9 @@ public class FunThings {
                     event.getChannel().sendMessage("fellow knucklehead").queue();
             }
     }
+
+    @Override
+    public void
+
+
 }
