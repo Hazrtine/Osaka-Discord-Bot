@@ -20,15 +20,11 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Scanner;
 
-public class PlayBot implements Command {
+public class PlayBot extends ListenerAdapter implements Command {
 
     private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
     private TextChannel channel;
 
-    public PlayBot(MessageReceivedEvent event) {
-        onMessageReceived(event);
-        LOGGER.debug(event.getMessage().getContentRaw());
-    }
 
     public void onMessageReceived(MessageReceivedEvent event) {
         onEchoCommand(event, event.getGuild(), getCommandBody(event.getMessage()));

@@ -21,14 +21,10 @@ import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
-public class HelperBot implements Command {
+public class HelperBot extends ListenerAdapter implements Command {
     private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
 
-    public HelperBot(MessageReceivedEvent event) {
-        LOGGER.debug("HelperBot invoked!");
-        onMessageReceived(event);
-    }
-
+    @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         Guild guild = event.getGuild();
         TextChannel channel = event.getChannel().asTextChannel();
@@ -40,17 +36,52 @@ public class HelperBot implements Command {
                 getDescription();
             } else {
                 event.getChannel().sendTyping().queue();
-                helpSpecific(event, command);
+                helpSpecific(command, channel);
+            }
+        }
+    }
+    @Override
+    public void onSlashCommandInteraction (SlashCommandInteractionEvent event) {
+        Guild guild = event.getGuild();
+        TextChannel channel = event.getChannel().asTextChannel();
+        String content = event.getInteraction().getCommandString().replaceAll("/", "");
+        if (event.getName().equals("info")) {
+            try {
+                if (content.equals("help"))
+                    helpSpecific(new HelperBot(), channel);
+                if (content.equals("info"))
+                    helpSpecific(new InformationBot(), channel);
+                if (content.equals("play"))
+                    helpSpecific(new PlayBot(), channel);
+            } catch (Exception e) {
+                helpGeneral(event.getChannel().asTextChannel());
             }
         }
     }
 
-    private void helpSpecific(MessageReceivedEvent event, Command command) {
+    private void helpSpecific(Command command, TextChannel channel) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Command " + command.getIdentifier() + ":");
         String descriptionFormat = command.getDescription();
         String descriptionText = String.format(descriptionFormat);
         embedBuilder.setDescription(descriptionText);
+
+        channel.sendMessageEmbeds(embedBuilder.build()).queue();
+    }
+
+    private void helpGeneral(TextChannel channel) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle("Bot Commands")
+                .setDescription("Here is a list of commands you can use:")
+                .setColor(Color.BLUE);
+
+        embedBuilder.addField("help", "Displays this help message.", false);
+        embedBuilder.addField("info", "Shows information about a user or guild.\nOptions:\n- `guild`: The guild to get info about.\n- `user`: The user to get info about.\n- `osaka`: A boolean option.", false);
+        embedBuilder.addField("play", "Description of another command.", false);
+
+        embedBuilder.setFooter("Use /help [command] for more information about a specific command.");
+
+        channel.sendMessageEmbeds(embedBuilder.build()).queue();
     }
 
     @Override
