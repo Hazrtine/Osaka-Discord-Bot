@@ -32,10 +32,18 @@ public class InformationBot extends ListenerAdapter implements Command {
         @Override
         public void onSlashCommandInteraction (SlashCommandInteractionEvent event){
             if (event.getName().equals("info")) {
-                String guild = event.getOption("guild").getAsString();
+                Guild guild = event.getOption("guild").getAsChannel().asGuildMessageChannel().getGuild();
                 User user = event.getOption("user").getAsUser();
                 boolean osaka = event.getOption("osaka").getAsBoolean();
-                informationProcessing(, event.getGuild(), event.getUser(), event.getChannel().asTextChannel());
+
+                if (guild.isLoaded())
+                    informationAboutGuild(guild, event.getChannel().asTextChannel());
+                else if (osaka)
+                    informationAboutOsaka(event.getChannel().asTextChannel());
+                else if (user.getIdLong() != 0 || user.getId().isBlank())
+                    informationAboutUserSlashCommand(event.getChannel().asTextChannel(), user.getIdLong());
+                else
+                    LOGGER.error("There was nothing inputted in the slash command for /info");
             }
         }
 
@@ -45,6 +53,8 @@ public class InformationBot extends ListenerAdapter implements Command {
             Guild guild = event.getGuild();
             TextChannel channel = event.getChannel().asTextChannel();
             User user = event.getAuthor();
+            if (user.isBot())
+                return;
             if (message.equalsIgnoreCase("!info"))
                 if (awaitingResponse.isEmpty()) {
                     switch (message) {
@@ -53,7 +63,7 @@ public class InformationBot extends ListenerAdapter implements Command {
                             awaitingResponse.put(user.getIdLong(), new CompletableFuture<>());
                             LOGGER.debug("this is the awaiting fellers, {}", awaitingResponse);
                         case "user":
-                            informationAboutUser(channel, message, user.getIdLong());
+                            informationAboutUser(channel, user.getIdLong());
                         case "osaka", "osaker":
                             informationAboutOsaka(channel);
                     }
@@ -62,17 +72,18 @@ public class InformationBot extends ListenerAdapter implements Command {
                 }
         }
 
-        private void informationProcessing (String message, Guild guild, User user, TextChannel channel){
-
-        }
         public void informationAboutGuild (Guild guild, TextChannel channel){
 
         }
 
-        public void informationAboutUser (TextChannel channel, String message,long userId){
+        public void informationAboutUser (TextChannel channel, String message, long userId){
             channel.sendMessage("Who're you talkin' about?").queue();
             futureMessage(channel, message, userId);
         }
+
+    public void informationAboutUserSlashCommand (TextChannel channel, long userId){
+
+    }
 
         public void informationAboutOsaka (TextChannel channel){
             EmbedBuilder embed = new EmbedBuilder();
