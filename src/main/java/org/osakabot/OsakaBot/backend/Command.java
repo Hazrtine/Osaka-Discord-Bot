@@ -15,13 +15,13 @@ import java.util.List;
 public interface Command {
 
     /**
-     * Method called after {@link #doRun()} has run successfully. This is the case when no exception is thrown or,
+     * Method called after the program has run successfully. This is the case when no exception is thrown or,
      * depending on the implementation, other criteria, such as {@link #isFailed()} are met.
      */
     void onSuccess();
 
     /**
-     * Method that is executed when {@link #doRun()} fails, either when an exception is thrown or some other custom
+     * Method that is executed when the program fails, either when an exception is thrown or some other custom
      * condition based in implementation. It is important that this method should not throw an exception, otherwise this
      * exception would override the original exception.
      */
@@ -53,6 +53,7 @@ public interface Command {
 
     /**
      * Method is to get the description of the actual command for the helpSpecific() method over in {@link HelperBot}
+     * Also give some example Commands
      */
     String getDescription();
 
