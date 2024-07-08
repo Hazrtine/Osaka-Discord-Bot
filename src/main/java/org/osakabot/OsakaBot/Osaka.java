@@ -65,7 +65,7 @@ public class Osaka {
         jda.updateCommands().addCommands(
                 Commands.slash("ping", "Ping the bot."),
                 Commands.slash("info", "Get Certain Information from the Bot")
-                        .addOption(OptionType.STRING, "guild", "Do you want information about a certain guild? Type it in here.")
+                        .addOption(OptionType.STRING, "guild", "Do you want information about a certain guild? Type it in here. NOTE: I have to be in the guild.")
                         .addOption(OptionType.BOOLEAN, "osaka", "Do you want to know more about the bot?")
                         .addOption(OptionType.USER, "user", "You want to know more about a user? Input their username or their UserID!")
                 ).queue();

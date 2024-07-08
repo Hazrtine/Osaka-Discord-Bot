@@ -63,7 +63,7 @@ public class InformationBot extends ListenerAdapter implements Command {
                             awaitingResponse.put(user.getIdLong(), new CompletableFuture<>());
                             LOGGER.debug("this is the awaiting fellers, {}", awaitingResponse);
                         case "user":
-                            informationAboutUser(channel, user.getIdLong());
+                            informationAboutUser(channel, message,user.getIdLong());
                         case "osaka", "osaker":
                             informationAboutOsaka(channel);
                     }
