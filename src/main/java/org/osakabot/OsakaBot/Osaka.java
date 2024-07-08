@@ -35,26 +35,11 @@ public class Osaka {
                 .build();
         LOGGER.debug("Starting Bot!");
         System.out.println("Starting Bot!");
-        System.out.println(listOfCommandIdentifiers());
         registerCommands();
     }
 
     public static String getBotName() {
         return botName;
-    }
-
-    public static List<String> listOfCommandIdentifiers() {
-        return Stream.of(Objects.requireNonNull(new File("src/main/java/org/osakabot/OsakaBot/commands").listFiles()))
-                .filter(f -> f.getName().contains("Bot"))
-                .map(f -> {
-                    try {
-                        return readString(f.toPath());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .map(f -> f.substring(f.lastIndexOf("getIdentifier() ") + 35, f.indexOf(";", f.lastIndexOf("getIdentifier()")) - 1))
-                .toList();
     }
 
     public static JDA getJDA() {
