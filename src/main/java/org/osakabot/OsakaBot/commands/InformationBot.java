@@ -11,6 +11,7 @@ import org.osakabot.OsakaBot.Osaka;
 import org.osakabot.OsakaBot.backend.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Text;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -34,32 +35,35 @@ public class InformationBot extends ListenerAdapter implements Command {
                 String guild = event.getOption("guild").getAsString();
                 User user = event.getOption("user").getAsUser();
                 boolean osaka = event.getOption("osaka").getAsBoolean();
-                informationProcessing(Objects.requireNonNull(event.getInteraction().getOption("info")).getAsString(), event.getGuild(), event.getUser(), event.getChannel().asTextChannel());
+                informationProcessing(, event.getGuild(), event.getUser(), event.getChannel().asTextChannel());
             }
         }
 
         @Override
         public void onMessageReceived (MessageReceivedEvent event){
-            Message message = event.getMessage();
-            if (message.getContentRaw().equalsIgnoreCase("!info"))
-                informationProcessing(event.getMessage().getContentRaw(), event.getGuild(), event.getAuthor(), event.getChannel().asTextChannel());
+            String message = event.getMessage().getContentRaw();
+            Guild guild = event.getGuild();
+            TextChannel channel = event.getChannel().asTextChannel();
+            User user = event.getAuthor();
+            if (message.equalsIgnoreCase("!info"))
+                if (awaitingResponse.isEmpty()) {
+                    switch (message) {
+                        case "guild":
+                            informationAboutGuild(guild, channel);
+                            awaitingResponse.put(user.getIdLong(), new CompletableFuture<>());
+                            LOGGER.debug("this is the awaiting fellers, {}", awaitingResponse);
+                        case "user":
+                            informationAboutUser(channel, message, user.getIdLong());
+                        case "osaka", "osaker":
+                            informationAboutOsaka(channel);
+                    }
+                } else {
+                    channel.sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
+                }
         }
 
         private void informationProcessing (String message, Guild guild, User user, TextChannel channel){
-            if (awaitingResponse.isEmpty()) {
-                switch (message) {
-                    case "guild":
-                        informationAboutGuild(guild, channel);
-                        awaitingResponse.put(user.getIdLong(), new CompletableFuture<>());
-                        LOGGER.debug("this is the awaiting fellers, {}", awaitingResponse);
-                    case "user":
-                        informationAboutUser(channel, message, user.getIdLong());
-                    case "osaka", "osaker":
-                        informationAboutOsaka(channel);
-                }
-            } else {
-                channel.sendMessage("What information are you lookin' for?\nSay Guild for Guild stuff\nSay User for info about other people\nSay Osaka for information about me!").queue();
-            }
+
         }
         public void informationAboutGuild (Guild guild, TextChannel channel){
 
