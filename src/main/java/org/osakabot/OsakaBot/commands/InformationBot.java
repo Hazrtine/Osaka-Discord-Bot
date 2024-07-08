@@ -32,18 +32,26 @@ public class InformationBot extends ListenerAdapter implements Command {
         @Override
         public void onSlashCommandInteraction (SlashCommandInteractionEvent event){
             if (event.getName().equals("info")) {
-                Guild guild = event.getOption("guild").getAsChannel().asGuildMessageChannel().getGuild();
-                User user = event.getOption("user").getAsUser();
-                boolean osaka = event.getOption("osaka").getAsBoolean();
-
-                if (guild.isLoaded())
+                try {
+                    Guild guild = event.getOption("guild").getAsChannel().asGuildMessageChannel().getGuild();
                     informationAboutGuild(guild, event.getChannel().asTextChannel());
-                else if (osaka)
-                    informationAboutOsaka(event.getChannel().asTextChannel());
-                else if (user.getIdLong() != 0 || user.getId().isBlank())
-                    informationAboutUserSlashCommand(event.getChannel().asTextChannel(), user.getIdLong());
-                else
-                    LOGGER.error("There was nothing inputted in the slash command for /info");
+                } catch (Exception e) {
+                    try {
+                        User user = event.getOption("user").getAsUser();
+                        informationAboutUserSlashCommand(event.getChannel().asTextChannel(), user.getIdLong());
+
+
+                    } catch (Exception f) {
+                        try {
+                            boolean osaka = event.getOption("osaka").getAsBoolean();
+                            informationAboutOsaka(event.getChannel().asTextChannel());
+
+                        } catch (Exception g) {
+                            LOGGER.error("{} is being a bastard and put nothing for the /info command.", event.getName());
+                            event.getChannel().asTextChannel().sendMessage("Select one of the inputs if you want some information! I can't just tell you everythin'!").queue();
+                        }
+                    }
+                }
             }
         }
 
