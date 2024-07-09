@@ -44,7 +44,7 @@ public class GenericCommand implements Command {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(boolean isSlash) {
         return "";
     }
 

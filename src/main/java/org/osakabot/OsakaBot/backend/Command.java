@@ -55,7 +55,7 @@ public interface Command {
      * Method is to get the description of the actual command for the helpSpecific() method over in {@link HelperBot}
      * Also give some example Commands
      */
-    String getDescription();
+    String getDescription(boolean isSlash);
 
     /**
      * @return list of roles this command is available to.

@@ -150,7 +150,7 @@ public class InformationBot extends ListenerAdapter implements Command {
         }
 
         @Override
-        public String getDescription () {
+        public String getDescription (boolean isSlash) {
             return "Gets your information about any guild that you want. Stuff like owners, etc.";
         }
 

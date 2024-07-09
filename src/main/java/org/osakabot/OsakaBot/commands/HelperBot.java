@@ -36,7 +36,7 @@ public class HelperBot extends ListenerAdapter implements Command {
                 getDescription();
             } else {
                 event.getChannel().sendTyping().queue();
-                helpSpecific(command, channel);
+                helpSpecific(command, channel, false);
             }
         }
     }
@@ -48,21 +48,21 @@ public class HelperBot extends ListenerAdapter implements Command {
         if (event.getName().equals("info")) {
             try {
                 if (content.equals("help"))
-                    helpSpecific(new HelperBot(), channel);
+                    helpSpecific(new HelperBot(), channel, true);
                 if (content.equals("info"))
-                    helpSpecific(new InformationBot(), channel);
+                    helpSpecific(new InformationBot(), channel, true);
                 if (content.equals("play"))
-                    helpSpecific(new PlayBot(), channel);
+                    helpSpecific(new PlayBot(), channel, true);
             } catch (Exception e) {
                 helpGeneral(event.getChannel().asTextChannel());
             }
         }
     }
 
-    private void helpSpecific(Command command, TextChannel channel) {
+    private void helpSpecific(Command command, TextChannel channel, boolean isSlash) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Command " + command.getIdentifier() + ":");
-        String descriptionFormat = command.getDescription();
+        String descriptionFormat = command.getDescription(isSlash);
         String descriptionText = String.format(descriptionFormat);
         embedBuilder.setDescription(descriptionText);
 
@@ -117,15 +117,8 @@ public class HelperBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public String getDescription() {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Osaka Bot");
-        String descriptionFormat = "bawls"; //CHECK THIS
-        String descriptionText = String.format(descriptionFormat);
-        embedBuilder.setDescription(descriptionText);
-        embedBuilder.setColor(Color.RED);
-
-        return descriptionText;
+    public String getDescription(boolean isSlash) {
+        return "Unused.";
     }
 
     @Override

@@ -83,11 +83,6 @@ public class PlayBot extends ListenerAdapter implements Command {
         mc.sendMessage("Can't find " + arg + ". You sure you're not just stupid?").queue();
     }
 
-
-    public void onReady(ReadyEvent event) {
-        //make an announcement of being alive
-        }
-
     @Override
     public void onSuccess() {
         LOGGER.debug("HelperBot Successful!");
@@ -122,8 +117,11 @@ public class PlayBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public String getDescription() {
-        return "Use this command to play a song";
+    public String getDescription(boolean isSlash) {
+        if (isSlash)
+            return "Use this command to play a song\n Example: ";
+
+        return "Use this command to play a song\n Example: ";
     }
 
     @Override
