@@ -7,17 +7,16 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.osakabot.OsakaBot.Osaka;
 import org.osakabot.OsakaBot.backend.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Text;
 
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +46,7 @@ public class InformationBot extends ListenerAdapter implements Command {
                             informationAboutOsaka(event.getChannel().asTextChannel());
 
                         } catch (Exception g) {
-                            LOGGER.error("{} is being a bastard and put nothing for the /info command.", event.getName());
+                            LOGGER.error("{} is being a bastard and put nothing for the /info command.", event.getInteraction().getUser());
                             event.getChannel().asTextChannel().sendMessage("Select one of the inputs if you want some information! I can't just tell you everythin'!").queue();
                         }
                     }
@@ -81,7 +80,7 @@ public class InformationBot extends ListenerAdapter implements Command {
         }
 
         public void informationAboutGuild (Guild guild, TextChannel channel){
-
+            channel.sendMessage("It's being built! Just... wait!").queue();
         }
 
         public void informationAboutUser (TextChannel channel, String message, long userId){
@@ -93,14 +92,14 @@ public class InformationBot extends ListenerAdapter implements Command {
 
     }
 
-        public void informationAboutOsaka (TextChannel channel){
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.setTitle("SAATAA ANDAGIIII");
-            embed.setDescription("Im! and! yheah!");
-            embed.setColor(Color.BLUE); // You can set the color you want
+        public void informationAboutOsaka (TextChannel channel) {
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("SAATAA ANDAGIIII");
+        embed.setDescription("I... here.");
+        embed.setColor(Color.BLUE); // You can set the color you want
 
-            channel.sendMessageEmbeds(embed.build()).queue();
-        }
+        channel.sendMessageEmbeds(embed.build()).queue();
+    }
 
         public static void futureMessage (MessageChannel channel, String message,long userId){
             // Check if this user is awaiting a response
