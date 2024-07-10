@@ -62,7 +62,7 @@ public class HelperBot extends ListenerAdapter implements Command {
         String descriptionText = String.format(descriptionFormat);
         embedBuilder.setDescription(descriptionText);
 
-        channel.sendMessageEmbeds(embedBuilder.build()).queue();
+        hook.editOriginalEmbeds(embedBuilder.build());
     }
 
     private void helpGeneral(TextChannel channel) {
