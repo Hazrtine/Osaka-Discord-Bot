@@ -29,7 +29,7 @@ public class HelperBot extends ListenerAdapter implements Command {
                 getDescription(false);
             } else {
                 event.getChannel().sendTyping().queue();
-                helpSpecific(command, channel, hook, false);
+                helpSpecific(command, channel, null, false);
             }
         }
     }
