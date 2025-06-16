@@ -41,8 +41,8 @@ public class Osaka {
     }
 
     static OptionData choiceOption = new OptionData(OptionType.STRING, "choice", "Pick A or B", true)
-            .addChoice("Tavern", "tavern")
-            .addChoice("Kyle", "kyle");
+            .addChoice("Tavern", "Tavern")
+            .addChoice("Kyle", "Kyle");
 
     private static void registerCommands() {
         jda.getGuildById("835385439112265759").updateCommands().addCommands(
