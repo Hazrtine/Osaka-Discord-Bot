@@ -19,12 +19,12 @@ public class AzumangaQuoteGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
 
     public static String generate() {
-        String filePath = "C:\\Users\\Hazrtine\\IdeaProjects\\OsakaBot\\src\\main\\resources\\AzumangaDaiohEntireScript.txt";
+        String filePath = "src/main/resources/AzumangaDaiohEntireScript.txt";
         String regex = "Osaka:(.*?)\n.*";
         Pattern pattern = Pattern.compile(regex);
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath));
-             Scanner ignored = new Scanner(System.in)) {
+            Scanner ignored = new Scanner(System.in)) {
 
         StringBuilder fileContent = new StringBuilder();
         String line;
