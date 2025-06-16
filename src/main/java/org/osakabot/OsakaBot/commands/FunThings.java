@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class FunThings extends ListenerAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FunThings.class);
 
     public FunThings() {
 
@@ -36,7 +36,7 @@ public class FunThings extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equals("ping")) {
-            event.deferReply().queue(); // Tell discord we received the command, send a thinking... message to the user
+            event.deferReply().queue();
             event.getHook().sendMessage("Pong!").queue();
         }
     }
