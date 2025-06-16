@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.osakabot.OsakaBot.backend.ListenerIntersection;
+import org.osakabot.OsakaBot.backend.ServerStatusMonitor;
 import org.osakabot.OsakaBot.commands.FunThings;
 import org.osakabot.OsakaBot.commands.InformationBot;
 import org.slf4j.Logger;
@@ -30,6 +31,9 @@ public class Osaka {
         LOGGER.debug("Starting Bot!");
         System.out.println("Starting Bot!");
         registerCommands();
+
+        ServerStatusMonitor monitor = new ServerStatusMonitor(jda);
+        monitor.start();
     }
 
     public static String getBotName() {
@@ -45,7 +49,7 @@ public class Osaka {
             .addChoice("Kyle", "Kyle");
 
     private static void registerCommands() {
-        jda.getGuildById("835385439112265759").updateCommands().addCommands(
+        jda.getGuildById("1224454602473340958").updateCommands().addCommands(
                 Commands.slash("ping", "Ping the bot."),
                 Commands.slash("info", "Get Certain Information from the Bot")
                         .addOption(OptionType.STRING, "guild", "Do you want information about a certain guild? Type it in here. NOTE: I have to be in the guild.")
