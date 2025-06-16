@@ -1,7 +1,5 @@
 package org.osakabot.OsakaBot.commands;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -32,39 +30,21 @@ public class InformationBot extends ListenerAdapter implements Command {
 
     private static final Map<Long, CompletableFuture<String>> awaitingResponse = new HashMap<>();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InformationBot.class);
 
     public InformationBot() {}
 
         @Override
-        public void onSlashCommandInteraction (SlashCommandInteractionEvent event){ //what... the hell is this code? im looking at this round a year or two later and this just looks horrid! ughhhh!
+        public void onSlashCommandInteraction (SlashCommandInteractionEvent event) { //what... the hell is this code? im looking at this round a year or two later and this just looks horrid! ughhhh!
             OptionMapping choiceOpt = event.getOption("choice"); //expand this pattern to the rest of this godawful code
             String choice = choiceOpt.getAsString();
 
             if (event.getName().equals("info")) {
-                try {
-                    Guild guild = event.getOption("guild").getAsChannel().asGuildMessageChannel().getGuild();
-                    informationAboutGuild(guild, event.getChannel().asTextChannel());
-                } catch (Exception e) {
+                System.out.println("Whatevermans");
+                } else if (event.getName().equals("status")) {
+                event.deferReply().queue(hook -> {
                     try {
-                        User user = event.getOption("user").getAsUser();
-                        informationAboutUserSlashCommand(event.getChannel().asTextChannel(), user.getIdLong());
-
-
-                    } catch (Exception f) {
-                        try {
-                            boolean osaka = event.getOption("osaka").getAsBoolean();
-                            informationAboutOsaka(event.getChannel().asTextChannel());
-
-                        } catch (Exception g) {
-                            LOGGER.error("{} is being a bastard and put nothing for the /info command.", event.getInteraction().getUser());
-                            event.getChannel().asTextChannel().sendMessage("Select one of the inputs if you want some information! I can't just tell you everythin'!").queue();
-                        }
-                    }
-                }
-            } else if (event.getName().equals("status")) {
-                try {
-                    HttpClient client = HttpClient.newHttpClient();
+                        HttpClient client = HttpClient.newHttpClient();
                         HttpRequest request = HttpRequest.newBuilder()
                                 .uri(URI.create("https://api.mcsrvstat.us/2/" + choice + ".hazrtine.construction"))
                                 .GET()
@@ -72,17 +52,22 @@ public class InformationBot extends ListenerAdapter implements Command {
 
                         HttpResponse<String> resp = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+                        if (resp.statusCode() != 200) {
+                            LOGGER.error("{}: FAILURE. BODY AS FOLLOWS:\n\n{}", resp.statusCode(), resp.body());
+                        }
+
                         JsonNode root = new ObjectMapper().readTree(resp.body());
                         boolean isOnline = root.path("online").asBoolean(false);
-                        int playersOnline = root.path("players").path("online").asInt(0);
+                        int playersOnline = root.path("players").path("online").asInt();
 
-                        if (isOnline) {
-                            event.getChannel().sendMessage("The " + choice + " server is online with " + playersOnline + " playing!").queue();
-                        } else
-                                event.getChannel().sendMessage("The " + choice + " server is offline.").queue();
-                } catch(Exception e) {
-                    LOGGER.error("Server status failure: {}", e.getMessage());
-                }
+                        hook.sendMessage(
+                                "The " + choice + " server is " + (isOnline ? "online" : "offline")
+                                        + " with " + playersOnline + " playing!"
+                        ).queue();
+                    } catch (Exception e) {
+                        LOGGER.error("Server status failure: {}", e.getMessage());
+                    }
+                });
             }
         }
 
@@ -90,7 +75,7 @@ public class InformationBot extends ListenerAdapter implements Command {
         public void onMessageReceived (MessageReceivedEvent event){
             String message = event.getMessage().getContentRaw();
             Guild guild = event.getGuild();
-            TextChannel channel = event.getChannel().asTextChannel();
+            TextChannel channel = event.getChannel().asTextChannel(); //osaka can't really respond to NewsChannels, and im fine with that
             User user = event.getAuthor();
             if (user.isBot())
                 return;
@@ -121,7 +106,7 @@ public class InformationBot extends ListenerAdapter implements Command {
         }
 
     public void informationAboutUserSlashCommand (TextChannel channel, long userId){
-
+        //i am going to debate whether i even want this?
     }
 
         public void informationAboutOsaka (TextChannel channel) {
