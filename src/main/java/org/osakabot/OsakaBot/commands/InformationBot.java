@@ -1,5 +1,8 @@
 package org.osakabot.OsakaBot.commands;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -31,15 +34,13 @@ public class InformationBot extends ListenerAdapter implements Command {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
 
-    public static class ServerStatus { boolean online; Players players; } //to expand
-    public static class Players { int online; }
-
     public InformationBot() {}
 
         @Override
         public void onSlashCommandInteraction (SlashCommandInteractionEvent event){ //what... the hell is this code? im looking at this round a year or two later and this just looks horrid! ughhhh!
             OptionMapping choiceOpt = event.getOption("choice"); //expand this pattern to the rest of this godawful code
-            String choice = choiceOpt.getAsString().toLowerCase();
+            String choice = choiceOpt.getAsString();
+
             if (event.getName().equals("info")) {
                 try {
                     Guild guild = event.getOption("guild").getAsChannel().asGuildMessageChannel().getGuild();
@@ -62,34 +63,25 @@ public class InformationBot extends ListenerAdapter implements Command {
                     }
                 }
             } else if (event.getName().equals("status")) {
-                LOGGER.error("Server status queried for {}!", event.getOption("choice").getAsString());
                 try {
                     HttpClient client = HttpClient.newHttpClient();
-                    if (event.getOption("choice").getAsString().equals("tavern")) {
                         HttpRequest request = HttpRequest.newBuilder()
-                                .uri(URI.create("https://api.mcsrvstat.us/2/tavern.hazrtine.construction"))
+                                .uri(URI.create("https://api.mcsrvstat.us/2/" + choice + ".hazrtine.construction"))
                                 .GET()
                                 .build();
 
                         HttpResponse<String> resp = client.send(request, HttpResponse.BodyHandlers.ofString());
-                        LOGGER.debug("Tavern Status code: " + resp.statusCode());
-                        LOGGER.debug("Tavern Body:\n" + resp.body());
-                        if (resp.statusCode() == 200) {
-                            ObjectMapper mapper = new ObjectMapper();
-                            ServerStatus status = mapper.readValue(resp.body(), ServerStatus.class);
 
-                            System.out.println("Server online? " + status.online);
-                            System.out.println("Players online: " +
-                                    (status.players != null ? status.players.online : 0)
-                            );
-                        } else {
-                            System.err.println("Failed to fetch status: HTTP " + resp.statusCode());
-                        }
-                    } else if (event.getOption("choice").getAsString().equals("kyle")) {
+                        JsonNode root = new ObjectMapper().readTree(resp.body());
+                        boolean isOnline = root.path("online").asBoolean(false);
+                        int playersOnline = root.path("players").path("online").asInt(0);
 
-                    }
+                        if (isOnline) {
+                            event.getChannel().sendMessage("The " + choice + " server is online with " + playersOnline + " playing!").queue();
+                        } else
+                                event.getChannel().sendMessage("The " + choice + " server is offline.").queue();
                 } catch(Exception e) {
-                    LOGGER.error("Server status failure: was not queried for anything.");
+                    LOGGER.error("Server status failure: {}", e.getMessage());
                 }
             }
         }
