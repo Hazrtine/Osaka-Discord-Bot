@@ -3,3 +3,6 @@ either
     b. rework how ListenerIntersection works, more like a ListenerRegistry
 add meme functionality; just put the entirety of my meme folder in the bot, see how that goes
 add neco-arc functionality; the mental illness better go crazy
+
+
+make it where when there's a change in the state of the minecraft server OsakaBot makes that known to the people. that is hte main functionality of hte bot.
