@@ -23,7 +23,7 @@ public class FunThings extends ListenerAdapter {
         LOGGER.debug("FunThings Amirite");
         String message = event.getMessage().getContentRaw();
         if (!event.getAuthor().isBot())
-            switch (message) {
+            switch (message.toLowerCase()) {
                 case "h":
                     if ((int) (Math.random() * 3) == 2)
                         event.getChannel().sendMessage("h").queue();
