@@ -37,12 +37,11 @@ public class InformationBot extends ListenerAdapter implements Command {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) { //what... the hell is this code? im looking at this round a year or two later and this just looks horrid! ughhhh!
-        OptionMapping choiceOpt = event.getOption("choice"); //expand this pattern to the rest of this godawful code
-        String choice = choiceOpt.getAsString();
-
         if (event.getName().equals("info")) {
             informationAboutOsaka(event);
         } else if (event.getName().equals("status")) {
+            OptionMapping choiceOpt = event.getOption(event.getOptions().get(0).getAsString()); //expand this pattern to the rest of this godawful code
+            String choice = choiceOpt.getAsString();
             event.deferReply().queue(hook -> {
                 try {
                     HttpClient client = HttpClient.newHttpClient();
