@@ -44,7 +44,7 @@ public class Osaka {
         return jda;
     }
 
-    static OptionData choiceOption = new OptionData(OptionType.STRING, "Servers", "Which server?", true)
+    static OptionData choiceOption = new OptionData(OptionType.STRING, "server", "Which server?", true)
             .addChoice("Tavern", "Tavern")
             .addChoice("Kyle", "Kyle");
 
