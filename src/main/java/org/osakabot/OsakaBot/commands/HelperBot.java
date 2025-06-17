@@ -7,8 +7,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import org.osakabot.OsakaBot.Osaka;
 import org.osakabot.OsakaBot.backend.Command;
+import org.osakabot.OsakaBot.backend.GenericCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import java.awt.*;
 import java.util.List;
 
 public class HelperBot extends ListenerAdapter implements Command {
-    private final Logger LOGGER = LoggerFactory.getLogger(HelperBot.class);
+    private final Logger LOGGER = LoggerFactory.getLogger( HelperBot.class);
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
