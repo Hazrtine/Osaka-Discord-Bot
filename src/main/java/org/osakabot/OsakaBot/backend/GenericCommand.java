@@ -1,9 +1,8 @@
-package org.osakabot.OsakaBot.commands;
+package org.osakabot.OsakaBot.backend;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import org.osakabot.OsakaBot.backend.Command;
 
 import java.util.List;
 
