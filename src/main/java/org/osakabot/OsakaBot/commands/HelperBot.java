@@ -16,7 +16,7 @@ import java.awt.*;
 import java.util.List;
 
 public class HelperBot extends ListenerAdapter implements Command {
-    private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(HelperBot.class);
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {

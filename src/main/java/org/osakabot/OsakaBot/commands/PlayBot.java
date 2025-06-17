@@ -1,6 +1,5 @@
 package org.osakabot.OsakaBot.commands;
 
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -9,7 +8,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.osakabot.OsakaBot.Osaka;
@@ -18,13 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class PlayBot extends ListenerAdapter implements Command {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
-    private TextChannel channel;
-
+    private final Logger LOGGER = LoggerFactory.getLogger(PlayBot.class);
 
     public void onMessageReceived(MessageReceivedEvent event) {
         onEchoCommand(event, event.getGuild(), getCommandBody(event.getMessage()));
