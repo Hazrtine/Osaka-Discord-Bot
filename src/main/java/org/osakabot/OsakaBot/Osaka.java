@@ -10,6 +10,7 @@ import org.osakabot.OsakaBot.backend.ListenerIntersection;
 import org.osakabot.OsakaBot.backend.ServerStatusMonitor;
 import org.osakabot.OsakaBot.commands.FunThings;
 import org.osakabot.OsakaBot.commands.InformationBot;
+import org.osakabot.OsakaBot.commands.OutsideInteractionsBot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,7 @@ public class Osaka {
                 .addEventListeners(new ListenerIntersection())
                 .addEventListeners(new InformationBot())
                 .addEventListeners(new FunThings())
+                .addEventListeners(new OutsideInteractionsBot())
                 .build();
         jda.awaitReady();
         jda.updateCommands().queue();
@@ -44,9 +46,12 @@ public class Osaka {
         return jda;
     }
 
-    static OptionData choiceOption = new OptionData(OptionType.STRING, "server", "Which server?", true)
+    static OptionData statusOptions = new OptionData(OptionType.STRING, "status", "Which server?", true)
             .addChoice("Tavern", "Tavern")
             .addChoice("Kyle", "Kyle");
+    static OptionData serverOptions = new OptionData(OptionType.STRING, "server", "Which server?", true)
+            .addChoice("Add New Server Operator", "anso")
+            .addChoice("Turn Server On", "tso");
 
     private static void registerCommands() {
         jda.getGuildById("1224454602473340958").updateCommands().addCommands(
@@ -55,7 +60,8 @@ public class Osaka {
                 Commands.slash("help", "Get help from the bot")
                         .addOption(OptionType.STRING, "command", "What command would you like help with?"),
                 Commands.slash("status", "Is your minecraft server up?")
-                        .addOptions(choiceOption)
-                ).queue();
+                        .addOptions(statusOptions),
+                Commands.slash("server", "Server options")
+                        .addOptions(serverOptions)).queue();
     }
 }
