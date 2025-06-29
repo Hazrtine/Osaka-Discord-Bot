@@ -72,7 +72,7 @@ public class InformationBot extends ListenerAdapter implements Command {
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onMessageReceived(MessageReceivedEvent event) throws IllegalStateException {
         String message = event.getMessage().getContentRaw();
         Guild guild = event.getGuild();
         TextChannel channel = event.getChannel().asTextChannel(); //osaka can't really respond to NewsChannels, and im fine with that
