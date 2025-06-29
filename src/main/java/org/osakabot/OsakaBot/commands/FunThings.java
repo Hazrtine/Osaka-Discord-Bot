@@ -23,13 +23,11 @@ public class FunThings extends ListenerAdapter {
         LOGGER.debug("FunThings Amirite");
         String message = event.getMessage().getContentRaw();
         if (!event.getAuthor().isBot())
-            switch (message.toLowerCase()) {
-                case "h":
-                    if ((int) (Math.random() * 3) == 2)
-                        event.getChannel().sendMessage("h").queue();
-                    break;
-                case "i love this bot":
-                    event.getChannel().sendMessage(Objects.requireNonNull(AzumangaQuoteGenerator.generate())).queue();
+            if (message.equals("h")) {
+                if ((int) (Math.random() * 3) == 2)
+                    event.getChannel().sendMessage("h").queue();
+            } else if (message.toLowerCase().contains("i love this bot") || (message.toLowerCase().contains("osaka") && message.toLowerCase().contains("love"))) {
+                event.getChannel().sendMessage(Objects.requireNonNull(AzumangaQuoteGenerator.generate())).queue();
             }
     }
 
