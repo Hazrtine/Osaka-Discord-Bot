@@ -43,7 +43,6 @@ public class AzumangaQuoteGenerator {
             } else {
                 Random random = new Random();
                 int randomIndex = random.nextInt(Math.min(matches.size(), 889));
-                System.out.println("Randomly selected match: " + matches.get(randomIndex).substring(7));
                 return matches.get(randomIndex).substring(7);
             }
 
