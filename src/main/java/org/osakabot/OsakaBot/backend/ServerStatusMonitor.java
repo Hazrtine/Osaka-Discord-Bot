@@ -15,7 +15,8 @@ import java.util.concurrent.TimeUnit;
 public class ServerStatusMonitor {
     private final JDA jda;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private boolean lastOnline = false;
+    private boolean lastOnlineTavern = false;
+    private boolean lastOnlineKyle = false;
     private Instant lastChange = Instant.now();
 
     public ServerStatusMonitor(JDA jda) {
@@ -30,8 +31,8 @@ public class ServerStatusMonitor {
     private void checkAndNotifyTavern() {
         boolean nowOnline = isServerAcceptingConnections("localhost", 25565, 2_000);
 
-        if (nowOnline != lastOnline) {
-            lastOnline = nowOnline;
+        if (nowOnline != lastOnlineTavern) {
+            lastOnlineTavern = nowOnline;
             lastChange = Instant.now();
             announceTavern(nowOnline);
         }
@@ -63,8 +64,8 @@ public class ServerStatusMonitor {
     private void checkAndNotifyKyle() {
         boolean nowOnline = isServerAcceptingConnections("localhost", 6942, 2_000);
 
-        if (nowOnline != lastOnline) {
-            lastOnline = nowOnline;
+        if (nowOnline != lastOnlineKyle) {
+            lastOnlineKyle = nowOnline;
             lastChange = Instant.now();
             announceKyle(nowOnline);
         }
