@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.osakabot.OsakaBot.backend.ListenerIntersection;
 import org.osakabot.OsakaBot.backend.ServerStatusMonitor;
@@ -49,9 +51,6 @@ public class Osaka {
     static OptionData statusOptions = new OptionData(OptionType.STRING, "status", "Which server?", true)
             .addChoice("Tavern", "Tavern")
             .addChoice("Kyle", "Kyle");
-    static OptionData serverOptions = new OptionData(OptionType.STRING, "server", "Which server?", true)
-            .addChoice("Add New Server Operator", "anso")
-            .addChoice("Turn Server On", "tso");
 
     private static void registerCommands() {
         jda.getGuildById("1224454602473340958").updateCommands().addCommands(
@@ -61,7 +60,11 @@ public class Osaka {
                         .addOption(OptionType.STRING, "command", "What command would you like help with?"),
                 Commands.slash("status", "Is your minecraft server up?")
                         .addOptions(statusOptions),
-                Commands.slash("server", "Server options")
-                        .addOptions(serverOptions)).queue();
+                Commands.slash("server", "Server options").addSubcommands(
+                        new SubcommandData("tso", "Turn on the server"),
+                        new SubcommandData("anso", "Add a user as server operator"),
+                        new SubcommandData("players", "Lists the players on the server.")
+                                .addOption(OptionType.USER, "target", "User to promote", true)
+                )).queue();
     }
 }
