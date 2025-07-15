@@ -6,23 +6,18 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.json.JSONObject;
 import org.osakabot.OsakaBot.backend.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+
 import java.util.List;
 
 public class OutsideInteractionsBot extends ListenerAdapter implements Command {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OutsideInteractionsBot.class);
-    private static final String SERVER_URL = "localhost";
+    private static final String SERVER_URL = "http://localhost:4005/startDiscord";
     private static final String SERVER_SECRET = System.getenv("serverSecret");
 
     public OutsideInteractionsBot() {
@@ -31,52 +26,72 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equals("server")) {
-            String action = event.getOption(event.getOptions().get(0).getAsString()).getAsString();
+            String action = event.getOptions().get(0).getAsString();
+            LOGGER.error(event.getOptions().toString());
             if (action.equals("anso")) {
                 event.reply("Please provide the username to add as server operator.").queue();
             } else if (action.equals("tso")) {
-                event.reply("Turning the server on... 🔌🖥️").queue();
                 User user = event.getUser();
 
                 try {
+                    okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+
                     String jsonBody = String.format(
-                            "{\"userId\": %s, \"username\": \"%s\", \"password\": \"%s\"}",
+                            "{\"userId\":\"%s\",\"username\":\"%s\",\"password\":\"%s\"}",
                             user.getId(),
                             user.getName(),
                             SERVER_SECRET
                     );
 
-                    URL url = new URL(SERVER_URL);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    LOGGER.debug(jsonBody);
 
-                    conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Content-Type", "application/json; utf-8");
-                    conn.setRequestProperty("Accept", "application/json");
-                    conn.setDoOutput(true);
+                    okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                            jsonBody,
+                            okhttp3.MediaType.get("application/json; charset=utf-8")
+                    );
 
-                    try (OutputStream os = conn.getOutputStream()) {
-                        byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);
-                        os.write(input, 0, input.length);
-                    }
+                    okhttp3.Request request = new okhttp3.Request.Builder()
+                            .url(SERVER_URL)
+                            .post(body)
+                            .addHeader("Accept", "application/json")
+                            .build();
 
-                    int code = conn.getResponseCode();
-                    InputStream responseStream = (code >= 200 && code < 300) ? conn.getInputStream() : conn.getErrorStream();
+                    okhttp3.Response response = client.newCall(request).execute();
 
-                    String response;
-                    try (BufferedReader br = new BufferedReader(new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
-                        StringBuilder responseBuilder = new StringBuilder();
-                        String line;
-                        while ((line = br.readLine()) != null) {
-                            responseBuilder.append(line.trim());
+                    String responseText = response.body() != null
+                            ? response.body().string()
+                            : "{\"message\": \"<no response>\"}";
+
+                    String finalReply;
+
+                    try {
+                        JSONObject json = new JSONObject(responseText);
+                        String message = json.optString("message", "No message.");
+                        boolean authorized = json.optBoolean("authorized", false);
+                        boolean success = json.optBoolean("success", false);
+
+                        // Friendly user-facing message mapping
+                        if (!authorized && message.contains("Add As Operator")) {
+                            finalReply = "❌ Sorry, you're not an authorized operator!";
+                        } else if (!authorized && message.contains("Wrong Password")) {
+                            finalReply = "🔐 Incorrect server password.";
+                        } else if (!success && message.contains("recently started")) {
+                            finalReply = "🕒 Please wait a bit before starting the server again.";
+                        } else if (authorized && success) {
+                            finalReply = "✅ Server is starting up!";
+                        } else {
+                            finalReply = "⚠️ Something went wrong: `" + message + "`";
                         }
-                        response = responseBuilder.toString();
+
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage());
+                        finalReply = "⚠️ Unexpected server response: `" + responseText + "`";
                     }
 
-                    event.reply("Server response: `" + response + "`").queue();
-
+                    event.reply(finalReply).queue();
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    event.reply("Something went wrong: `" + e.getMessage() + "`").setEphemeral(true).queue();
+                    LOGGER.error(e.getMessage());
+                    event.reply("Something went wrong: `" + e.getMessage() + "`").queue();
                 }
             } else {
                 event.reply("...what?").setEphemeral(true).queue();
