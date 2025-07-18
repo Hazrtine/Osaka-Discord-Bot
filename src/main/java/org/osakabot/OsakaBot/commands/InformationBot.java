@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import org.osakabot.OsakaBot.Osaka;
 import org.osakabot.OsakaBot.backend.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,19 +139,11 @@ public class InformationBot extends ListenerAdapter implements Command {
 
 
                 TextChannel channel = jda.getTextChannelById(channelId);
-                if (channel != null) {
-                    if (body.length() > 1900) {
-                        body = body.substring(0, 1897) + "...";
-                    }
 
-                    if (beans < 25)
-                        channel.sendMessage("Tha market is crashin' y'all! It's at " + beans + " beans per silly!!!").queue();
+                    if (beans < 20)
+                        channel.sendMessage("Tha market is crashin' y'all! It's at **" + beans + "** beans per silly!!!").queue();
                     else if (beans > 190)
-                        channel.sendMessage("Tha market has never been better y'all! It's at " + beans + "beans per silly!!!").queue();
-                } else {
-                    System.err.println("Channel not found.");
-                }
-
+                        channel.sendMessage("Tha market has never been better y'all! It's at **" + beans + "** beans per silly!!!").queue();
             } catch (Exception e) {
                 System.err.println("Polling failed: " + e.getMessage());
             }
