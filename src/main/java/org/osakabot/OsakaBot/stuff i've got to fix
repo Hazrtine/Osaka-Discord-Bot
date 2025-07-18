@@ -1,7 +1,1 @@
-either
-    a. get rid of ListenerIntersection
-    b. rework how ListenerIntersection works, more like a ListenerRegistry
-
 add moderator functionality using the PermissionChecker class (that i probably got off of someone, this looks like code way too good for such a young me)
-
-make it so that certain users can turn on the server, maybe a discordStartup endpoint
