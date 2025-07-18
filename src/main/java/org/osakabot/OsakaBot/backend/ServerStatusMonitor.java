@@ -81,7 +81,7 @@ public class ServerStatusMonitor {
         String emoji = online ? "🟢" : "🔴";
         String text = online ? String.format("%s **Minecraft server is now ONLINE** (at %s)", emoji, lastChange) : String.format("%s **Minecraft server is now OFFLINE** (at %s)", emoji, lastChange);
 
-        TextChannel channel = jda.getTextChannelById("1331903557561221200");
+        TextChannel channel = jda.getTextChannelById("1331903557561221200"); //temporarily shut down for testing.
         if (channel != null) {
             sendIfStatusChanged(channel, text);
         } else {
