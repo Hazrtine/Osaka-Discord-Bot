@@ -1,6 +1,7 @@
 package org.osakabot.OsakaBot.backend;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 // 1) Create a monitor
+
 public class ServerStatusMonitor {
     private final JDA jda;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -21,6 +23,34 @@ public class ServerStatusMonitor {
 
     public ServerStatusMonitor(JDA jda) {
         this.jda = jda;
+    }
+
+    public static void sendIfStatusChanged(TextChannel channel, String newMessage) {
+        if (newMessage.length() > 2000) newMessage = newMessage.substring(0, 1997) + "...";
+
+        boolean isNewOnline = newMessage.toLowerCase().contains("online");
+        boolean isNewOffline = newMessage.toLowerCase().contains("offline");
+
+        String finalNewMessage = newMessage;
+        channel.getHistory().retrievePast(1).queue(history -> {
+            if (!history.isEmpty()) {
+                Message last = history.get(0);
+                if (last.getAuthor().isBot()) {
+                    String lastContent = last.getContentRaw().toLowerCase();
+                    boolean wasOnline = lastContent.contains("online");
+                    boolean wasOffline = lastContent.contains("offline");
+
+                    if ((isNewOnline && wasOnline) || (isNewOffline && wasOffline)) {
+                        return;
+                    }
+                }
+            }
+
+            channel.sendMessage(finalNewMessage).queue();
+        }, failure -> {
+            System.err.println("Failed to get channel history: " + failure.getMessage());
+            channel.sendMessage(finalNewMessage).queue();
+        });
     }
 
     public void start() {
@@ -49,13 +79,11 @@ public class ServerStatusMonitor {
 
     private void announceTavern(boolean online) {
         String emoji = online ? "🟢" : "🔴";
-        String text  = online
-                ? String.format("%s **Minecraft server is now ONLINE** (at %s)", emoji, lastChange)
-                : String.format("%s **Minecraft server is now OFFLINE** (at %s)", emoji, lastChange);
+        String text = online ? String.format("%s **Minecraft server is now ONLINE** (at %s)", emoji, lastChange) : String.format("%s **Minecraft server is now OFFLINE** (at %s)", emoji, lastChange);
 
         TextChannel channel = jda.getTextChannelById("1331903557561221200");
         if (channel != null) {
-            channel.sendMessage(text).queue();
+            sendIfStatusChanged(channel, text);
         } else {
             System.err.println("No channel found with that ID!");
         }
@@ -73,13 +101,11 @@ public class ServerStatusMonitor {
 
     private void announceKyle(boolean online) {
         String emoji = online ? "🟢" : "🔴";
-        String text  = online
-                ? String.format("%s **Minecraft server is now ONLINE** (at %s)", emoji, lastChange)
-                : String.format("%s **Minecraft server is now OFFLINE** (at %s)", emoji, lastChange);
+        String text = online ? String.format("%s **Minecraft server is now ONLINE** (at %s)", emoji, lastChange) : String.format("%s **Minecraft server is now OFFLINE** (at %s)", emoji, lastChange);
 
         TextChannel channel = jda.getTextChannelById("1093702777328390216");
         if (channel != null) {
-            channel.sendMessage(text).queue();
+            sendIfStatusChanged(channel, text);
         } else {
             System.err.println("No channel found with that ID!");
         }
