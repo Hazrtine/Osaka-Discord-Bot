@@ -3,6 +3,7 @@ package org.osakabot.OsakaBot.commands;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -20,17 +21,16 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class InformationBot extends ListenerAdapter implements Command {
 
     private static final Map<Long, CompletableFuture<String>> awaitingResponse = new HashMap<>();
-
     private static final Logger LOGGER = LoggerFactory.getLogger(InformationBot.class);
+    private static final String URL = "https://sillypost.net/games/sillyexchange";
+    private static final String COOKIE = "lax_token=6063b4b0-2aa7-4f2c-af35-c3e2ad8ecea5; token=6063b4b0-2aa7-4f2c-af35-c3e2ad8ecea5";
 
     public InformationBot() {
     }
@@ -105,6 +105,58 @@ public class InformationBot extends ListenerAdapter implements Command {
             channel.sendMessage("You took too long to respond. Please try again.").queue();
             awaitingResponse.remove(userId);
         });
+    }
+
+    public void start(JDA jda, String channelId) {
+        Timer timer = new Timer();
+        timer.schedule(new PollTask(jda, channelId), 0, 10 * 60 * 900); // 9 minutes
+    }
+
+    static class PollTask extends TimerTask {
+        private final JDA jda;
+        private final String channelId;
+
+        public PollTask(JDA jda, String channelId) {
+            this.jda = jda;
+            this.channelId = channelId;
+        }
+
+        @Override
+        public void run() {
+            try {
+                HttpClient client = HttpClient.newHttpClient();
+
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(URL))
+                        .POST(HttpRequest.BodyPublishers.noBody())
+                        .header("Cookie", COOKIE)
+                        .header("User-Agent", "Java SillyPoller/1.0")
+                        .build();
+
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                String body = response.body();
+                int beans = Integer.parseInt(body.replaceAll("\\D", ""));
+
+
+                TextChannel channel = jda.getTextChannelById(channelId);
+                if (channel != null) {
+                    if (body.length() > 1900) {
+                        body = body.substring(0, 1897) + "...";
+                    }
+
+                    if (beans < 25)
+                        channel.sendMessage("Tha market is crashin' y'all! It's at " + beans + " beans per silly!!!").queue();
+                    else if (beans > 190)
+                        channel.sendMessage("Tha market has never been better y'all! It's at " + beans + "beans per silly!!!").queue();
+                } else {
+                    System.err.println("Channel not found.");
+                }
+
+            } catch (Exception e) {
+                System.err.println("Polling failed: " + e.getMessage());
+            }
+        }
     }
 
 

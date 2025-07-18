@@ -98,7 +98,7 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
                     event.reply("⚠️ Failed: " + json.optString("message", "Unknown error")).queue();
                     return;
                 }
-
+                LOGGER.error(json.toString());
                 JSONArray players = json.optJSONArray("players");
                 if (players == null || players.isEmpty()) {
                     event.reply("📭 No players online.").queue();
@@ -112,7 +112,7 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
 
                 event.reply(msg.toString()).queue();
             }
-        });
+        }); //TODO: make code less unreadable
     }
 
     private void handleTurnServerOn(SlashCommandInteractionEvent event) {
@@ -169,6 +169,11 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
             return "⚠️ Unexpected server response: `" + jsonText + "`";
         }
     }
+
+    private void sillyMarketNotification() {
+
+    }
+
 
 
     @Override

@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.osakabot.OsakaBot.backend.ListenerIntersection;
@@ -34,8 +33,9 @@ public class Osaka {
         jda.updateCommands().queue();
         LOGGER.debug("Starting Bot!");
         System.out.println("Starting Bot!");
+        InformationBot infoBot = new InformationBot();
+        infoBot.start(jda, "1395600131964797040");
         registerCommands();
-
         ServerStatusMonitor monitor = new ServerStatusMonitor(jda);
         monitor.start();
     }
@@ -62,9 +62,9 @@ public class Osaka {
                         .addOptions(statusOptions),
                 Commands.slash("server", "Server options").addSubcommands(
                         new SubcommandData("tso", "Turn on the server"),
-                        new SubcommandData("anso", "Add a user as server operator"),
+                        new SubcommandData("anso", "Add a user as server operator")
+                                .addOption(OptionType.USER, "target", "User to promote", true),
                         new SubcommandData("players", "Lists the players on the server.")
-                                .addOption(OptionType.USER, "target", "User to promote", true)
                 )).queue();
     }
 }
