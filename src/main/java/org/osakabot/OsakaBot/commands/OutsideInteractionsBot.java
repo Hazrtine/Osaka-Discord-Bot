@@ -20,7 +20,7 @@ import java.util.List;
 public class OutsideInteractionsBot extends ListenerAdapter implements Command {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OutsideInteractionsBot.class);
-    private static final String SERVER_URL = "http://localhost:4005/startDiscord";
+    private static final String SERVER_ON_URL = "http://localhost:4005/startDiscord";
     private static final String SERVER_SECRET = System.getenv("serverSecret");
     private final OkHttpClient http = new OkHttpClient();
 
@@ -132,7 +132,7 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
             );
 
             Request request = new Request.Builder()
-                    .url(SERVER_URL)
+                    .url(SERVER_ON_URL)
                     .post(body)
                     .addHeader("Accept", "application/json")
                     .build();
@@ -150,7 +150,36 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
     }
 
     private void handleTurnServerOff(SlashCommandInteractionEvent event) {
+        User user = event.getUser();
 
+        try {
+            String jsonBody = new JSONObject()
+                    .put("userId", user.getId())
+                    .put("username", user.getName())
+                    .put("password", SERVER_SECRET)
+                    .toString();
+
+            RequestBody body = RequestBody.create(
+                    jsonBody,
+                    MediaType.get("application/json; charset=utf-8")
+            );
+
+            Request request = new Request.Builder()
+                    .url(SERVER_ON_URL)
+                    .post(body)
+                    .addHeader("Accept", "application/json")
+                    .build();
+
+            try (Response response = http.newCall(request).execute()) {
+                String respText = response.body() != null ? response.body().string()
+                        : "{\"message\":\"<no body>\"}";
+                event.reply(mapServerMessage(respText)).queue();
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("tso error", e);
+            event.reply("❌ Something went wrong: `" + e.getMessage() + "`").queue();
+        }
     }
 
     private String mapServerMessage(String jsonText) {
