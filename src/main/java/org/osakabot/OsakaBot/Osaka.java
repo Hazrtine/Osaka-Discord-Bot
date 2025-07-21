@@ -53,7 +53,7 @@ public class Osaka {
             .addChoice("Kyle", "Kyle");
 
     private static void registerCommands() {
-        jda.getGuildById("1224454602473340958").updateCommands().addCommands(
+        jda.updateCommands().addCommands(
                 Commands.slash("ping", "Ping the bot."),
                 Commands.slash("info", "Get Certain Information from the Bot"),
                 Commands.slash("help", "Get help from the bot")
@@ -62,6 +62,7 @@ public class Osaka {
                         .addOptions(statusOptions),
                 Commands.slash("server", "Server options").addSubcommands(
                         new SubcommandData("tso", "Turn on the server"),
+                        new SubcommandData("tsoff", "Turn off the server"),
                         new SubcommandData("anso", "Add a user as server operator")
                                 .addOption(OptionType.USER, "target", "User to promote", true),
                         new SubcommandData("players", "Lists the players on the server.")
