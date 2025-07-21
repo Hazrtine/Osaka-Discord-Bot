@@ -21,6 +21,8 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OutsideInteractionsBot.class);
     private static final String SERVER_ON_URL = "http://localhost:4005/startDiscord";
+    private static final String SERVER_OFF_URL = "http://localhost:4005/stopDiscord";
+    private static final String SERVER_OPERATOR_URL = "http://localhost:4005/toggleOperator";
     private static final String SERVER_SECRET = System.getenv("serverSecret");
     private final OkHttpClient http = new OkHttpClient();
 
@@ -53,7 +55,7 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
         );
 
         Request request = new Request.Builder()
-                .url("http://localhost:4005/toggleOperator")
+                .url(SERVER_OPERATOR_URL)
                 .post(body)
                 .addHeader("Accept", "application/json")
                 .build();
@@ -132,7 +134,7 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
             );
 
             Request request = new Request.Builder()
-                    .url(SERVER_ON_URL)
+                    .url(SERVER_OFF_URL)
                     .post(body)
                     .addHeader("Accept", "application/json")
                     .build();
