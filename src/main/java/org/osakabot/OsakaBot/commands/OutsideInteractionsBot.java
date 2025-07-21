@@ -32,6 +32,7 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
         switch (event.getSubcommandName()) {
             case "anso" -> handleAddOperator(event);
             case "tso" -> handleTurnServerOn(event);
+            case "tsoff" -> handleTurnServerOff(event);
             case "players" -> handleGetListofPlayers(event);
             default -> event.reply("Unknown sub-command.").setEphemeral(true).queue();
         }
@@ -146,6 +147,10 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
             LOGGER.error("tso error", e);
             event.reply("❌ Something went wrong: `" + e.getMessage() + "`").queue();
         }
+    }
+
+    private void handleTurnServerOff(SlashCommandInteractionEvent event) {
+
     }
 
     private String mapServerMessage(String jsonText) {
