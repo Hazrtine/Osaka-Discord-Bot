@@ -2,6 +2,7 @@ package org.osakabot.OsakaBot;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -53,7 +54,17 @@ public class Osaka {
             .addChoice("Kyle", "Kyle");
 
     private static void registerCommands() {
-        jda.updateCommands().addCommands(
+        Guild tavern = jda.getGuildById("835385439112265759");
+        Guild osak = jda.getGuildById("1224454602473340958");
+
+        assert tavern != null;
+        assert osak != null;
+        guildUpdater(tavern);
+        guildUpdater(osak);
+    }
+
+    private static void guildUpdater(Guild guild) {
+        guild.updateCommands().addCommands(
                 Commands.slash("ping", "Ping the bot."),
                 Commands.slash("info", "Get Certain Information from the Bot"),
                 Commands.slash("help", "Get help from the bot")
@@ -61,8 +72,8 @@ public class Osaka {
                 Commands.slash("status", "Is your minecraft server up?")
                         .addOptions(statusOptions),
                 Commands.slash("server", "Server options").addSubcommands(
-                        new SubcommandData("tso", "Turn on the server"),
-                        new SubcommandData("tsoff", "Turn off the server"),
+                        new SubcommandData("on", "Turn on the server"),
+                        new SubcommandData("off", "Turn off the server"),
                         new SubcommandData("anso", "Add a user as server operator")
                                 .addOption(OptionType.USER, "target", "User to promote", true),
                         new SubcommandData("players", "Lists the players on the server.")
