@@ -134,7 +134,7 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
             );
 
             Request request = new Request.Builder()
-                    .url(SERVER_OFF_URL)
+                    .url(SERVER_ON_URL)
                     .post(body)
                     .addHeader("Accept", "application/json")
                     .build();
@@ -153,6 +153,7 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
 
     private void handleTurnServerOff(SlashCommandInteractionEvent event) {
         User user = event.getUser();
+        event.deferReply().queue(hook -> {
 
         try {
             String jsonBody = new JSONObject()
@@ -167,21 +168,21 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
             );
 
             Request request = new Request.Builder()
-                    .url(SERVER_ON_URL)
+                    .url(SERVER_OFF_URL)
                     .post(body)
                     .addHeader("Accept", "application/json")
                     .build();
 
             try (Response response = http.newCall(request).execute()) {
-                String respText = response.body() != null ? response.body().string()
-                        : "{\"message\":\"<no body>\"}";
-                event.reply(mapServerMessage(respText)).queue();
+                String offbody = response.body().string();
+                event.reply(offbody).queue();
             }
 
         } catch (Exception e) {
             LOGGER.error("tso error", e);
             event.reply("❌ Something went wrong: `" + e.getMessage() + "`").queue();
         }
+        });
     }
 
     private String mapServerMessage(String jsonText) {
@@ -205,12 +206,6 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
             return "⚠️ Unexpected server response: `" + jsonText + "`";
         }
     }
-
-    private void sillyMarketNotification() {
-
-    }
-
-
 
     @Override
     public void onSuccess() {
