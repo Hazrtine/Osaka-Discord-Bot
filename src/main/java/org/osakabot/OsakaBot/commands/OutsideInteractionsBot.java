@@ -33,8 +33,8 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
 
         switch (event.getSubcommandName()) {
             case "anso" -> handleAddOperator(event);
-            case "tso" -> handleTurnServerOn(event);
-            case "tsoff" -> handleTurnServerOff(event);
+            case "on" -> handleTurnServerOn(event);
+            case "off" -> handleTurnServerOff(event);
             case "players" -> handleGetListofPlayers(event);
             default -> event.reply("Unknown sub-command.").setEphemeral(true).queue();
         }
