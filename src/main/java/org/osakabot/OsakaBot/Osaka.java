@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.osakabot.OsakaBot.backend.BotHeartbeat;
 import org.osakabot.OsakaBot.backend.ListenerIntersection;
 import org.osakabot.OsakaBot.backend.ServerStatusMonitor;
 import org.osakabot.OsakaBot.commands.FunThings;
@@ -22,7 +23,7 @@ public class Osaka {
     public static final Logger LOGGER = LoggerFactory.getLogger(Osaka.class);
     private static JDA jda;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
         jda = JDABuilder.createDefault(System.getenv("OsakaKey"))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(new ListenerIntersection())
@@ -39,6 +40,7 @@ public class Osaka {
         registerCommands();
         ServerStatusMonitor monitor = new ServerStatusMonitor(jda);
         monitor.start();
+        BotHeartbeat.start(2474);
     }
 
     public static String getBotName() {

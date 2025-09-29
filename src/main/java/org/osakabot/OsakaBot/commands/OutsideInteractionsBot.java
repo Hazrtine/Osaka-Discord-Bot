@@ -174,13 +174,14 @@ public class OutsideInteractionsBot extends ListenerAdapter implements Command {
                     .build();
 
             try (Response response = http.newCall(request).execute()) {
-                String offbody = response.body().string();
-                event.reply(offbody).queue();
+                String respText = response.body() != null ? response.body().string()
+                        : "{\"message\":\"<no body>\"}";
+                hook.editOriginal(mapServerMessage(respText)).queue();
             }
 
         } catch (Exception e) {
             LOGGER.error("tso error", e);
-            event.reply("❌ Something went wrong: `" + e.getMessage() + "`").queue();
+            hook.editOriginal("❌ Something went wrong: `" + e.getMessage() + "`").queue();
         }
         });
     }
