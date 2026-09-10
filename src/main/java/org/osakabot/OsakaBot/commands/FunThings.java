@@ -1,5 +1,6 @@
 package org.osakabot.OsakaBot.commands;
 
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -21,12 +22,12 @@ public class FunThings extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         LOGGER.debug("FunThings Amirite");
-        String message = event.getMessage().getContentRaw();
+        Message message = event.getMessage();
         if (!event.getAuthor().isBot())
-            if (message.equals("h")) {
+            if (message.getContentRaw().equals("h")) {
                 if ((int) (Math.random() * 2) == 1)
                     event.getChannel().sendMessage("h").queue();
-            } else if (message.toLowerCase().contains("i love this bot") || (message.toLowerCase().contains("osaka") && message.toLowerCase().contains("love"))) {
+            } else if (message.getContentRaw().toLowerCase().contains("i love this bot") || (message.getContentRaw().contains("osaka") && message.getContentRaw().contains("love")) || message.getMentions().isMentioned(event.getJDA().getSelfUser())) {
                 event.getChannel().sendMessage(Objects.requireNonNull(AzumangaQuoteGenerator.generate())).queue();
             }
     }
