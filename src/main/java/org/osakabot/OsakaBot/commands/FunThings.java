@@ -24,7 +24,7 @@ public class FunThings extends ListenerAdapter {
         String message = event.getMessage().getContentRaw();
         if (!event.getAuthor().isBot())
             if (message.equals("h")) {
-                if ((int) (Math.random() * 3) == 2)
+                if ((int) (Math.random() * 2) == 1)
                     event.getChannel().sendMessage("h").queue();
             } else if (message.toLowerCase().contains("i love this bot") || (message.toLowerCase().contains("osaka") && message.toLowerCase().contains("love"))) {
                 event.getChannel().sendMessage(Objects.requireNonNull(AzumangaQuoteGenerator.generate())).queue();
@@ -38,6 +38,4 @@ public class FunThings extends ListenerAdapter {
             event.getHook().sendMessage("Pong!").queue();
         }
     }
-
-
 }
