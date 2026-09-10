@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -11,14 +12,16 @@ import java.time.Instant;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-// 1) Create a monitor
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.stream.Collectors;
 
 public class ServerStatusMonitor {
     private final JDA jda;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private boolean lastOnlineTavern = false;
-    private boolean lastOnlineKyle = false;
+    // private boolean lastOnlineKyle = false;
     private Instant lastChange = Instant.now();
 
     public ServerStatusMonitor(JDA jda) {
@@ -55,25 +58,41 @@ public class ServerStatusMonitor {
 
     public void start() {
         scheduler.scheduleAtFixedRate(this::checkAndNotifyTavern, 0, 10, TimeUnit.SECONDS);
-        scheduler.scheduleAtFixedRate(this::checkAndNotifyKyle, 0, 10, TimeUnit.SECONDS);
+        //scheduler.scheduleAtFixedRate(this::checkAndNotifyKyle, 0, 10, TimeUnit.SECONDS);
     }
 
     private void checkAndNotifyTavern() {
-        boolean nowOnline = isServerAcceptingConnections("localhost", 25565, 2_000);
+        try {
+            URL url = new URL("http://127.0.0.1:4005/isOnline");
 
-        if (nowOnline != lastOnlineTavern) {
-            lastOnlineTavern = nowOnline;
-            lastChange = Instant.now();
-            announceTavern(nowOnline);
-        }
-    }
+            HttpURLConnection connection =
+                    (HttpURLConnection) url.openConnection();
 
-    private boolean isServerAcceptingConnections(String host, int port, int timeoutMs) {
-        try (Socket s = new Socket()) {
-            s.connect(new InetSocketAddress(host, port), timeoutMs);
-            return true;
-        } catch (IOException e) {
-            return false;
+            connection.setConnectTimeout(2000);
+            connection.setReadTimeout(2000);
+
+            String response;
+
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream()))) {
+
+                response = reader.lines()
+                        .collect(Collectors.joining());
+            }
+
+            boolean nowOnline = response.contains("\"online\":true");
+
+            if (nowOnline != lastOnlineTavern) {
+                lastOnlineTavern = nowOnline;
+                lastChange = Instant.now();
+
+                announceTavern(nowOnline);
+            }
+
+        } catch (Exception e) {
+            System.err.println(
+                    "Failed to get Tavern status: " + e.getMessage()
+            );
         }
     }
 
@@ -88,28 +107,29 @@ public class ServerStatusMonitor {
             System.err.println("No channel found with that ID!");
         }
     }
-
-    private void checkAndNotifyKyle() {
-        boolean nowOnline = isServerAcceptingConnections("localhost", 6942, 2_000);
-
-        if (nowOnline != lastOnlineKyle) {
-            lastOnlineKyle = nowOnline;
-            lastChange = Instant.now();
-            announceKyle(nowOnline);
-        }
-    }
-
-    private void announceKyle(boolean online) {
-        String emoji = online ? "🟢" : "🔴";
-        String text = online ? String.format("%s **Minecraft server is now ONLINE** (at %s)", emoji, lastChange) : String.format("%s **Minecraft server is now OFFLINE** (at %s)", emoji, lastChange);
-
-        TextChannel channel = jda.getTextChannelById("1093702777328390216");
-        if (channel != null) {
-            sendIfStatusChanged(channel, text);
-        } else {
-            System.err.println("No channel found with that ID!");
-        }
-    }
 }
+
+//    private void checkAndNotifyKyle() {
+//        boolean nowOnline = isServerAcceptingConnections("localhost", 6942, 2_000);
+//
+//        if (nowOnline != lastOnlineKyle) {
+//            lastOnlineKyle = nowOnline;
+//            lastChange = Instant.now();
+//            announceKyle(nowOnline);
+//        }
+//    }
+//
+//    private void announceKyle(boolean online) {
+//        String emoji = online ? "🟢" : "🔴";
+//        String text = online ? String.format("%s **Minecraft server is now ONLINE** (at %s)", emoji, lastChange) : String.format("%s **Minecraft server is now OFFLINE** (at %s)", emoji, lastChange);
+//
+//        TextChannel channel = jda.getTextChannelById("1093702777328390216");
+//        if (channel != null) {
+//            sendIfStatusChanged(channel, text);
+//        } else {
+//            System.err.println("No channel found with that ID!");
+//        }
+//    }
+//}
 
 //TODO: make this modular
